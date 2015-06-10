@@ -33,7 +33,7 @@ module.exports = function(grunt) {
           include: ["src/js"]
         },
         files: [{
-          src: ["src/js/node.js"],
+          src: ["src/js/widget.js", "src/js/widget-view.js", "src/js/widget-gridview.js"],
           dest: "dist/marionette-widget-gridview.js"
         }]
       }
@@ -47,7 +47,9 @@ module.exports = function(grunt) {
         },
         files: {
           'dist/marionette-widget-gridview.min.js': [
-            'src/js/node.js'
+            'src/js/widget.js',
+            'src/js/widget-view.js',
+            'src/js/widget-gridview.js'
           ]
         }
       }
