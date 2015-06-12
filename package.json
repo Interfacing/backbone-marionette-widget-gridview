@@ -1,7 +1,7 @@
 {
   "name": "backbone-marionette-widget-gridview",
   "description": "Widget grid view based on MarionetteJS and GridstackJS",
-  "version": "1.2.0",
+  "version": "1.0.0",
   "keywords": [
     "marionette",
     "backbone",

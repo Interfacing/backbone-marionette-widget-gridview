@@ -1,8 +1,15 @@
-
 Marionette.WidgetView = Marionette.ItemView.extend({
-    template: _.template('<p>Default WidgetView</p>'),
+  template: _.template('<p><%= position() %></p>'),
 
-    somefunction: function() {
-        console.log('some function called');
-    }
+  modelEvents: {
+    'change': 'render'
+  },
+
+  templateHelpers: function () {
+    return {
+      position: function () {
+        return '(' + this.x + ',' + this.y + ')';
+      }
+    };
+  }
 });
