@@ -1,7 +1,7 @@
 Backbone.Widget = Backbone.Model.extend({
   defaults: {
     type: 'default',
-    viewType: Marionette.WidgetView,
+    viewType: 'WidgetView',
     name: 'noname',
     x: 0,
     y: 0,
@@ -18,7 +18,16 @@ Backbone.Widget = Backbone.Model.extend({
       height: this.get('height'),
       el: '<div class="grid-stack-item"><div class="grid-stack-item-content"><div id="' + this.get('widgetId') + '" class="widget-content"></div></div></div>'
     };
+  },
+
+  isDefaultView: function() {
+    return this.get('viewType') === this.getDefaultView();
+  },
+
+  getDefaultView: function() {
+    return 'WidgetView';
   }
+
 });
 
 Backbone.WidgetList = Backbone.Collection.extend({

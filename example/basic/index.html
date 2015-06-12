@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width initial-scale=1"/>
     <link rel='stylesheet' href='../../dist/marionette-widget-gridview.min.css'/>
-    <link href="../../node_modules/gridstack/dist/gridstack.css" rel="stylesheet">
+    <link href="../../src/lib/gridstack/gridstack.min.css" rel="stylesheet">
     <style>
       .hide {
         display: none !important;
@@ -27,8 +27,8 @@
     <script src="../../node_modules/underscore/underscore-min.js"></script>
     <script src="../../node_modules/backbone/backbone-min.js"></script>
     <script src="../../node_modules/backbone.marionette/lib/backbone.marionette.min.js"></script>
-    <script src="../../node_modules/gridstack/dist/gridstack.min.js"></script>
-    <script src="lib/backbone.localstorage/backbone.localStorage-min.js"></script>
+    <script src="../../src/lib/gridstack/gridstack.min.js"></script>
+    <script src="../lib/backbone.localstorage/backbone.localStorage-min.js"></script>
     <script src="../../dist/marionette-widget-gridview.js"></script>
 
     <script type="text/template" id="gridview-template">
@@ -43,26 +43,30 @@
         ButtonWidgetView = Marionette.WidgetView.extend({
             template: _.template('<button>click</button>')
         }),
-        CustomWidgetList = Backbone.WidgetList.extend({ localStorage: new Backbone.LocalStorage("widgetlist-storage") });
+        CustomWidgetList = Backbone.WidgetList.extend({ localStorage: new Backbone.LocalStorage("widgetlist-storage") })
+        views = {CustomWidgetView: CustomWidgetView, ButtonWidgetView: ButtonWidgetView};
 
       var widgets = new CustomWidgetList();
       //autoPos true by default, TODO: add in readme.md
-      var gridview = new Marionette.WidgetGridView({ collection: widgets, gsOptions: {vertical_margin: 20, animate: false, height: 10, width: 10} });
+      var gridview = new Marionette.WidgetGridView({ collection: widgets, customViews: views, autoPos: false, gsOptions: {float: true, vertical_margin: 20, animate: false, height: 10, width: 10} });
 
       $('#main-container').html(gridview.$el);
       gridview.render();
-
       widgets.fetch();
+      gridview.setAutoPos(true);
 
       widgets.each(function(wdgt) {
           if (wdgt.get('widgetId') > newId) {
               newId = wdgt.get('widgetId');
           }
       });
-
+      var arrViews = ["ButtonWidgetView", "CustomWidgetView", "NonexistantView"];
+      var randomView = function() {
+          return arrViews[Math.floor((Math.random() * 3))];
+      };
       $("#btn-add-widget").click(function(){
           newId++;
-          gridview.collection.add(new Backbone.Widget({type: 'button', viewType: ButtonWidgetView, name: 'some widget', width: 2, height: 2, x: 0, y: 4, widgetId: newId}));
+          gridview.collection.add(new Backbone.Widget({type: 'button', viewType: randomView(), name: 'some widget', width: 2, height: 2, x: 0, y: 4, widgetId: newId}));
       });
 
     </script>

@@ -7,7 +7,8 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
 
   initialize: function (options) {
     options = options || {};
-    if (!options.autoPos) { options.autoPos = true; }
+    console.log(options);
+    if (!options.hasOwnProperty('autoPos')) { options.autoPos = true; }
     if (!options.gsOptions) { options.gsOptions = {}; }
     if (!options.collection) {
       throw new Error('Missing collection inside initialization options');
@@ -17,6 +18,10 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
 
   onRender: function () {
     this.initializeGridstack();
+  },
+
+  setAutoPos: function(bool) {
+    this.options.autoPos = bool;
   },
 
   initializeGridstack: function () {
@@ -47,14 +52,31 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
       model.save();
       this.showWidget(model);
     } else {
-      alert('Not enough free space to place the widget id : ' + model.get('widgetId'));
+      console.log('Not enough free space to place the widget id : ' + model.get('widgetId'));
     }
   },
 
   showWidget: function (model) {
-    //TODO: change type of attribute viewType to string so we can store it, retreive it and build the appropriate view
-    //this.getRegion(model.get('widgetId')).show(new (model.get('viewType'))());
-    this.getRegion(model.get('widgetId')).show(new Marionette.WidgetView({model: model}));
+    var view;
+    if (!this.options.customViews) {
+      if (!model.isDefaultView()) {
+        console.log('Model has a custom view but none is defined in the options, a default view will be displayed instead');
+        model.set('viewType', model.getDefaultView()).save();
+      }
+      view = new Marionette.WidgetView({ model: model });
+    } else {
+      if (this.options.customViews[model.get('viewType')]) {
+        view = new this.options.customViews[model.get('viewType')]({ model: model });
+      } else {
+        if (!model.isDefaultView()) {
+          console.log('Model has a custom view but it is not defined in the options, a default view will be displayed instead');
+          model.set('viewType', model.getDefaultView()).save();
+        }
+        view = new Marionette.WidgetView({ model: model });
+      }
+    }
+
+    this.getRegion(model.get('widgetId')).show(view);
   },
 
   updateModelsAttributes: function (e, items) {
@@ -65,12 +87,7 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
         newWidth = item.width,
         newHeight = item.height;
       //SHOULD SAVE BEFORE LEAVING PAGE OR AFTER EVERY CHANGE?
-      this.collection.findWhere({widgetId: parseInt(modelId)}).set({
-        x: newX,
-        y: newY,
-        width: newWidth,
-        height: newHeight
-      }).save();
+      this.collection.findWhere({widgetId: parseInt(modelId)}).set({x: newX, y: newY, width: newWidth, height: newHeight}).save();
     }, this);
   }
 });
