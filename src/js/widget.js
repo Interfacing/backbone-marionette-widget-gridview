@@ -1,6 +1,7 @@
 Backbone.Widget = Backbone.Model.extend({
   defaults: {
     type: 'default',
+    //TODO: would be nice to use getDefaultView but it didn't work
     viewType: 'WidgetView',
     name: 'noname',
     x: 0,
@@ -10,13 +11,14 @@ Backbone.Widget = Backbone.Model.extend({
     widgetId: 0
   },
 
-  getWidgetProperties: function () {
+  getWidgetProperties: function() {
     return {
+      id: this.get('widgetId'),
       x: this.get('x'),
       y: this.get('y'),
       width: this.get('width'),
       height: this.get('height'),
-      el: '<div class="grid-stack-item"><div class="grid-stack-item-content"><div id="' + this.get('widgetId') + '" class="widget-content"></div></div></div>'
+      el: '<div class="grid-stack-item"><div id="' + this.get('widgetId') + '" class="grid-stack-item-content"></div></div>'
     };
   },
 

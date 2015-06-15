@@ -1,15 +1,17 @@
 Marionette.WidgetView = Marionette.ItemView.extend({
-  template: _.template('<p><%= position() %></p>'),
+  template: _.template('<div class="some-widget"><p>default view</p></div>'),
 
   modelEvents: {
     'change': 'render'
   },
 
-  templateHelpers: function () {
-    return {
-      position: function () {
-        return '(' + this.x + ',' + this.y + ')';
-      }
-    };
+  onRender: function() {
+    this.$el = this.$el.children();
+    this.$el.unwrap();
+    this.setElement(this.$el);
+  },
+
+  onRemove: function() {
+    this.trigger('removeWidget', this.model);
   }
 });
