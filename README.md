@@ -6,7 +6,8 @@ Using Backbone.js, Marionette.js and Gridstack.js to render a grid view of widge
 TODO
 
 ## Features
-TODO
+- Add widgets to the grid view by adding a `Widget` to the collection that was passed when creating the `WidgetGridView`
+- Remove widgets by associating the `onRemove` function of the base `WidgetView` to an event on one of your custom views
 
 ## Dependencies
 * [jQuery](http://jquery.com) (>= 1.11.0) 
