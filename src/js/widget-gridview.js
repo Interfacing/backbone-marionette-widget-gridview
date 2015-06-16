@@ -2,14 +2,18 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
   template: '#gridview-template',
 
   collectionEvents: {
-    'add': 'addWidget',
+    'add':    'addWidgetView',
     'remove': 'removeWidgetView'
   },
 
   initialize: function(options) {
     options = options || {};
-    if (!options.hasOwnProperty('autoPos')) { options.autoPos = true; }
-    if (!options.gsOptions) { options.gsOptions = {}; }
+    if (!options.hasOwnProperty('autoPos')) {
+      options.autoPos = true;
+    }
+    if (!options.gsOptions) {
+      options.gsOptions = {};
+    }
     if (!options.collection) {
       throw new Error('Missing collection inside initialization options');
     }
@@ -28,24 +32,23 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
     this.$('.grid-stack').gridstack(this.options.gsOptions);
     this.gridstack = this.$('.grid-stack').data('gridstack');
 
-    var self = this;
-    this.$('.grid-stack').on('change', function (e, items) {
-      self.updateModelsAttributes(e, items);
-    });
+    this.$('.grid-stack').on('change', _.bind(this.updateAllWidgetsAttributes, this));
   },
 
-  addWidget: function(model) {
+  removeWidget: function(model) {
+    model.destroy();
+  },
+
+  addWidgetView: function(model) {
     var widget = model.getWidgetProperties();
 
     if (this.gridstack.will_it_fit(widget.x, widget.y, widget.width, widget.height, this.options.autoPos)) {
       this.gridstack.add_widget(widget.el, widget.x, widget.y, widget.width, widget.height, this.options.autoPos);
 
       if (this.options.autoPos) {
-        var item =  this.$('#' + widget.id).closest('.grid-stack-item'),
-            newX = item.data('gs-x'),
-            newY = item.data('gs-y');
-        model.set({ x: newX, y: newY });
+        this.updateWidgetAttributesById(widget.id);
       }
+      //todo :
       model.save();
 
       this.addRegion(widget.id, '#' + widget.id);
@@ -55,17 +58,16 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
     }
   },
 
-  removeWidget: function(model) {
-    model.destroy();
-  },
-
   removeWidgetView: function(model) {
     var widgetId = model.get('widgetId'),
-      el = this.$('#' + widgetId).closest('.grid-stack-item');
+        el       = this.$('#' + widgetId).closest('.grid-stack-item');
 
     this.getRegion(widgetId).empty();
     this.removeRegion(widgetId);
     this.gridstack.remove_widget(el);
+
+    //temporary fix for issue : https://github.com/troolee/gridstack.js/issues/167
+    this.updateAllWidgetsAttributes();
   },
 
   showWidget: function(model) {
@@ -94,15 +96,42 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
     return view;
   },
 
-  updateModelsAttributes: function(e, items) {
-    _.each(items, function (item) {
-      var modelId = $(item.el[0]).find('.grid-stack-item-content').attr('id'),
-        newX = item.x,
-        newY = item.y,
-        newWidth = item.width,
-        newHeight = item.height;
-      this.collection.findWhere({widgetId: parseInt(modelId)}).set({x: newX, y: newY, width: newWidth, height: newHeight}).save();
-    }, this);
+  updateAllWidgetsAttributes: function() {
+    var self = this;
+    $('.grid-stack-item').each(function(i, obj) {
+      if (!$(obj).hasClass('grid-stack-placeholder')) {
+        console.log($(obj));
+        var data = self.getWidgetHtmlData($(obj)),
+            id   = $(obj).find('.grid-stack-item-content').attr('id');
+        console.log('ID : ' + id + ';   (' + data.x + ',' + data.y + ')');
+        self.collection.findWhere({ widgetId: parseInt(id) }).set({
+          x:      data.x,
+          y:      data.y,
+          width:  data.width,
+          height: data.height
+        }).save();
+      }
+    });
+  },
+
+  updateWidgetAttributesById: function(id) {
+    var data = this.getWidgetHtmlData(this.$('#' + id).closest('.grid-stack-item'));
+    this.collection.findWhere({ widgetId: id }).set({
+      x:      data.x,
+      y:      data.y,
+      width:  data.width,
+      height: data.height
+    }).save();
+  },
+
+  getWidgetHtmlData: function(item) {
+    console.log(item);
+    return {
+      x:      item.data('gs-x'),
+      y:      item.data('gs-y'),
+      width:  item.data('gs-width'),
+      height: item.data('gs-height')
+    };
   }
 
 });

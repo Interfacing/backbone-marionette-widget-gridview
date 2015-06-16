@@ -29,7 +29,6 @@ Backbone.Widget = Backbone.Model.extend({
   getDefaultView: function() {
     return 'WidgetView';
   }
-
 });
 
 Backbone.WidgetList = Backbone.Collection.extend({
