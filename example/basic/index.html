@@ -9,6 +9,11 @@
     #main-gridstack {
       background-color: #00A000;
     }
+
+    .grid-stack-item-content {
+      background-color: #00b3ee;
+      cursor: move;
+    }
   </style>
   <title>Basic example</title>
 </head>
@@ -29,27 +34,46 @@
   </div>
 </script>
 <script>
-  var widg1 = new Backbone.Widget({
+  var CustomWidget = Backbone.Widget.extend({
+      save: function(attrs, options) {
+        //save nothing nowhere
+        console.log('dummy save was called');
+      }
+    }),
+    CustomWidgetList = Backbone.WidgetList.extend({
+      model: CustomWidget
+    }),
+    widg1 = new CustomWidget({
       type:     'default',
       viewType: 'WidgetView',
       name:     'some widget',
       width:    2,
       height:   2,
       x:        0,
-      y:        4,
+      y:        0,
       widgetId: 1
     }),
-    widg2 = new Backbone.Widget({
+    widg2 = new CustomWidget({
       type:     'default',
       viewType: 'WidgetView',
       name:     'other widget',
-      width:    2,
-      height:   4,
+      width:    4,
+      height:   2,
       x:        0,
-      y:        4,
+      y:        0,
       widgetId: 2
     }),
-    widgets = new Backbone.WidgetList([ widg1, widg2 ]),
+    widg3 = new CustomWidget({
+      type:     'default',
+      viewType: 'WidgetView',
+      name:     'and another widget',
+      width:    6,
+      height:   2,
+      x:        0,
+      y:        2,
+      widgetId: 3
+    }),
+    widgets = new CustomWidgetList([widg1, widg2, widg3]),
     gridview = new Marionette.WidgetGridView({
       collection: widgets,
       gsOptions:  { vertical_margin: 20, animate: false, height: 10, width: 10 }

@@ -1,24 +1,23 @@
 Backbone.Widget = Backbone.Model.extend({
   defaults: {
-    type: 'default',
-    //TODO: would be nice to use getDefaultView but it didn't work
+    type:     'default',
     viewType: 'WidgetView',
-    name: 'noname',
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
+    name:     'noname',
+    x:        0,
+    y:        0,
+    width:    0,
+    height:   0,
     widgetId: 0
   },
 
-  getWidgetProperties: function() {
+  getGridstackAttributes: function() {
     return {
-      id: this.get('widgetId'),
-      x: this.get('x'),
-      y: this.get('y'),
-      width: this.get('width'),
+      id:     this.get('widgetId'),
+      x:      this.get('x'),
+      y:      this.get('y'),
+      width:  this.get('width'),
       height: this.get('height'),
-      el: '<div class="grid-stack-item"><div id="' + this.get('widgetId') + '" class="grid-stack-item-content"></div></div>'
+      el:     '<div class="grid-stack-item"><div id="' + this.get('widgetId') + '" class="grid-stack-item-content"></div></div>'
     };
   },
 
@@ -29,6 +28,7 @@ Backbone.Widget = Backbone.Model.extend({
   getDefaultView: function() {
     return 'WidgetView';
   }
+
 });
 
 Backbone.WidgetList = Backbone.Collection.extend({

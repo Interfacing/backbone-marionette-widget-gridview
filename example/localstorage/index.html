@@ -13,11 +13,17 @@
     #main-gridstack {
       background-color: #00A000;
     }
+
+    .grid-stack-item-content {
+      background-color: #00b3ee;
+      cursor: move;
+    }
   </style>
   <title>Example using localStorage</title>
 </head>
 <body>
 <button type="button" id="btn-add-widget">Add Widget!</button>
+<button type="button" id="btn-remove-all-widget">Remove all widgets</button>
 <div id="main-container"></div>
 
 <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
@@ -35,38 +41,40 @@
 </script>
 <script>
   var CustomWidgetView = Marionette.WidgetView.extend({
-        template: _.template('<div class="some-widget"><button class="close-btn">X</button><p><%= position() %></p></div>'),
-        ui: {
-          close: '.close-btn'
-        },
-        events: {
-          'click @ui.close': 'onRemove'
-        },
+      template: _.template('<div class="some-widget"><button class="close-btn">X</button><p><%= position() %></p></div>'),
+      ui:       {
+        close: '.close-btn'
+      },
+      events:   {
+        'click @ui.close': 'onRemove'
+      },
 
-        templateHelpers: function () {
-          return {
-            position: function () {
-              return '(' + this.x + ',' + this.y + ')';
-            }
-          };
-        }
-      }),
-      ButtonWidgetView = CustomWidgetView.extend({
-        template: _.template('<div class="some-widget"><button class="close-btn">X</button><button><%= position() %></button></div>')
-      }),
-      CustomWidgetList = Backbone.WidgetList.extend({ localStorage: new Backbone.LocalStorage("widgetlist-storage" )});
+      templateHelpers: function() {
+        return {
+          position: function() {
+            return '(' + this.x + ',' + this.y + ')';
+          }
+        };
+      }
+    }),
+    ButtonWidgetView = CustomWidgetView.extend({
+      template: _.template('<div class="some-widget"><button class="close-btn">X</button><button><%= position() %></button></div>')
+    }),
+    CustomWidgetList = Backbone.WidgetList.extend({
+      localStorage: new Backbone.LocalStorage("widgetlist-storage")
+    });
 
   var newId = 0,
-    views = {CustomWidgetView: CustomWidgetView, ButtonWidgetView: ButtonWidgetView},
+    views = { CustomWidgetView: CustomWidgetView, ButtonWidgetView: ButtonWidgetView },
     //nonexistant view was in there
     arrViews = ["ButtonWidgetView", "CustomWidgetView"],
     widgets = new CustomWidgetList(),
     //autoPos true by default, TODO: add in readme.md
     gridview = new Marionette.WidgetGridView({
-      collection: widgets,
+      collection:  widgets,
       customViews: views,
-      autoPos: false,
-      gsOptions: { vertical_margin: 20, animate: false, height: 10, width: 10 }
+      autoPos:     false,
+      gsOptions:   { vertical_margin: 20, animate: false, height: 10, width: 10 }
     });
 
   $('#main-container').html(gridview.$el);
@@ -74,27 +82,31 @@
   widgets.fetch();
   gridview.setAutoPos(true);
 
-  widgets.each(function (wdgt) {
+  widgets.each(function(wdgt) {
     if (wdgt.get('widgetId') > newId) {
       newId = wdgt.get('widgetId');
     }
   });
 
-  var randomView = function () {
+  var randomView = function() {
     return arrViews[Math.floor((Math.random() * arrViews.length))];
   };
-  $("#btn-add-widget").click(function () {
+  $("#btn-add-widget").click(function() {
     newId++;
     gridview.collection.add(new Backbone.Widget({
-      type: 'button',
+      type:     'button',
       viewType: randomView(),
-      name: 'some widget',
-      width: 2,
-      height: 2,
-      x: 0,
-      y: 4,
+      name:     'some widget',
+      width:    2,
+      height:   2,
+      x:        0,
+      y:        4,
       widgetId: newId
     }));
+  });
+
+  $("#btn-remove-all-widget").click(function() {
+    gridview.collection.reset();
   });
 
 </script>

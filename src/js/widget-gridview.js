@@ -3,16 +3,16 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
 
   collectionEvents: {
     'add':    'addWidgetView',
-    'remove': 'removeWidgetView'
+    'remove': 'removeWidgetView',
+    'reset': 'resetWidgetViews'
   },
 
   initialize: function(options) {
     options = options || {};
+    options.gsOptions = options.gsOptions || {};
+
     if (!options.hasOwnProperty('autoPos')) {
       options.autoPos = true;
-    }
-    if (!options.gsOptions) {
-      options.gsOptions = {};
     }
     if (!options.collection) {
       throw new Error('Missing collection inside initialization options');
@@ -20,49 +20,61 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
     this.options = options;
   },
 
-  onRender: function() {
-    this.initializeGridstack();
-  },
-
   setAutoPos: function(autoPos) {
     this.options.autoPos = autoPos;
   },
 
+  onRender: function() {
+    this.initializeGridstack();
+  },
+
   initializeGridstack: function() {
+    if (this.gridstack) {
+      this.gridstack.remove_all();
+    }
     this.$('.grid-stack').gridstack(this.options.gsOptions);
     this.gridstack = this.$('.grid-stack').data('gridstack');
-
     this.$('.grid-stack').on('change', _.bind(this.updateAllWidgetsAttributes, this));
+
+    this.repopulateWidgetViews();
   },
 
-  removeWidget: function(model) {
-    model.destroy();
+  removeWidget: function(widget) {
+    widget.destroy();
   },
 
-  addWidgetView: function(model) {
-    var widget = model.getWidgetProperties();
+  addWidgetView: function(widget) {
+    var widgetInfo = widget.getGridstackAttributes();
 
-    if (this.gridstack.will_it_fit(widget.x, widget.y, widget.width, widget.height, this.options.autoPos)) {
-      this.gridstack.add_widget(widget.el, widget.x, widget.y, widget.width, widget.height, this.options.autoPos);
+    if (this.gridstack.will_it_fit(widgetInfo.x,
+        widgetInfo.y,
+        widgetInfo.width,
+        widgetInfo.height,
+        this.options.autoPos)) {
+      this.gridstack.add_widget(widgetInfo.el,
+        widgetInfo.x,
+        widgetInfo.y,
+        widgetInfo.width,
+        widgetInfo.height,
+        this.options.autoPos);
 
       if (this.options.autoPos) {
-        this.updateWidgetAttributesById(widget.id);
+        this.updateWidgetAttributesById(widgetInfo.id);
+      } else {
+        widget.save();
       }
-      //todo :
-      model.save();
 
-      this.addRegion(widget.id, '#' + widget.id);
-      this.showWidget(model);
+      this.addRegion(widgetInfo.id, '#' + widgetInfo.id);
+      this.showWidget(widget);
     } else {
-      alert('Not enough free space to place the widget id : ' + widget.id);
+      alert('Not enough free space to place the widget id : ' + widgetInfo.id);
     }
   },
 
-  removeWidgetView: function(model) {
-    var widgetId = model.get('widgetId'),
+  removeWidgetView: function(widget) {
+    var widgetId = widget.get('widgetId'),
         el       = this.$('#' + widgetId).closest('.grid-stack-item');
 
-    this.getRegion(widgetId).empty();
     this.removeRegion(widgetId);
     this.gridstack.remove_widget(el);
 
@@ -70,27 +82,42 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
     this.updateAllWidgetsAttributes();
   },
 
-  showWidget: function(model) {
-    var view = this.getViewToShow(model);
-    this.listenTo(view, 'removeWidget', this.removeWidget);
-    this.getRegion(model.get('widgetId')).show(view);
+  resetWidgetViews: function() {
+    this.gridstack.remove_all();
+    this.repopulateWidgetViews();
   },
 
-  getViewToShow: function(model) {
+  repopulateWidgetViews: function() {
+    if (this.collection.length) {
+      var self = this;
+      this.getRegionManager().removeRegions();
+      this.collection.each(function(widget) {
+        self.addWidgetView(widget);
+      });
+    }
+  },
+
+  showWidget: function(widget) {
+    var view = this.getViewToShow(widget);
+    this.listenTo(view, 'removeWidget', this.removeWidget);
+    this.getRegion(widget.get('widgetId')).show(view);
+  },
+
+  getViewToShow: function(widget) {
     var view;
     if (!this.options.customViews) {
-      if (!model.isDefaultView()) {
-        model.set('viewType', model.getDefaultView()).save();
+      if (!widget.isDefaultView()) {
+        widget.set('viewType', widget.getDefaultView()).save();
       }
-      view = new Marionette.WidgetView({ model: model });
+      view = new Marionette.WidgetView({ model: widget });
     } else {
-      if (this.options.customViews[model.get('viewType')]) {
-        view = new this.options.customViews[model.get('viewType')]({ model: model });
+      if (this.options.customViews[widget.get('viewType')]) {
+        view = new this.options.customViews[widget.get('viewType')]({ model: widget });
       } else {
-        if (!model.isDefaultView()) {
-          model.set('viewType', model.getDefaultView()).save();
+        if (!widget.isDefaultView()) {
+          widget.set('viewType', widget.getDefaultView()).save();
         }
-        view = new Marionette.WidgetView({ model: model });
+        view = new Marionette.WidgetView({ model: widget });
       }
     }
     return view;
@@ -98,40 +125,19 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
 
   updateAllWidgetsAttributes: function() {
     var self = this;
-    $('.grid-stack-item').each(function(i, obj) {
-      if (!$(obj).hasClass('grid-stack-placeholder')) {
-        console.log($(obj));
-        var data = self.getWidgetHtmlData($(obj)),
-            id   = $(obj).find('.grid-stack-item-content').attr('id');
-        console.log('ID : ' + id + ';   (' + data.x + ',' + data.y + ')');
-        self.collection.findWhere({ widgetId: parseInt(id) }).set({
-          x:      data.x,
-          y:      data.y,
-          width:  data.width,
-          height: data.height
-        }).save();
-      }
+    this.collection.each(function(widget) {
+      self.updateWidgetAttributesById(widget.get('widgetId'));
     });
   },
 
   updateWidgetAttributesById: function(id) {
-    var data = this.getWidgetHtmlData(this.$('#' + id).closest('.grid-stack-item'));
+    var $item = this.$('#' + id).closest('.grid-stack-item');
     this.collection.findWhere({ widgetId: id }).set({
-      x:      data.x,
-      y:      data.y,
-      width:  data.width,
-      height: data.height
+      x:      $item.attr('data-gs-x'),
+      y:      $item.attr('data-gs-y'),
+      width:  $item.attr('data-gs-width'),
+      height: $item.attr('data-gs-height')
     }).save();
-  },
-
-  getWidgetHtmlData: function(item) {
-    console.log(item);
-    return {
-      x:      item.data('gs-x'),
-      y:      item.data('gs-y'),
-      width:  item.data('gs-width'),
-      height: item.data('gs-height')
-    };
   }
 
 });
