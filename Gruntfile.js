@@ -96,6 +96,26 @@ module.exports = function(grunt) {
           configFile: 'test/e2e/config.js'
         }
       }
+    },
+
+    watch: {
+      css: {
+        files: ['src/less/**/*.*'],
+        tasks: ['less', 'cssmin'],
+        options: {
+          spawn: false,
+          debounceDelay: 200
+        }
+      },
+
+      js: {
+        files: ['src/js/**/*.js'],
+        tasks: ['mince', 'uglify'],
+        options: {
+          spawn: false,
+          debounceDelay: 200
+        }
+      }
     }
   });
 
@@ -107,7 +127,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-protractor-runner');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default',  ['clean', 'less', 'jshint', 'mince', 'uglify', 'cssmin']);
+  grunt.registerTask('default',  ['clean', 'less', 'mince', 'uglify', 'cssmin', 'watch']);
   grunt.registerTask('test',  [ 'karma']);
 };

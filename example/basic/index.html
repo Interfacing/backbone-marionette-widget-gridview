@@ -34,16 +34,10 @@
   </div>
 </script>
 <script>
-  var CustomWidget = Backbone.Widget.extend({
-      save: function(attrs, options) {
-        //save nothing nowhere
-        console.log('dummy save was called');
-      }
+  var CustomWidgetList = Backbone.WidgetList.extend({
+      model: Backbone.Widget
     }),
-    CustomWidgetList = Backbone.WidgetList.extend({
-      model: CustomWidget
-    }),
-    widg1 = new CustomWidget({
+    widg1 = new Backbone.Widget({
       type:     'default',
       viewType: 'WidgetView',
       name:     'some widget',
@@ -53,7 +47,7 @@
       y:        0,
       widgetId: 1
     }),
-    widg2 = new CustomWidget({
+    widg2 = new Backbone.Widget({
       type:     'default',
       viewType: 'WidgetView',
       name:     'other widget',
@@ -63,7 +57,7 @@
       y:        0,
       widgetId: 2
     }),
-    widg3 = new CustomWidget({
+    widg3 = new Backbone.Widget({
       type:     'default',
       viewType: 'WidgetView',
       name:     'and another widget',
@@ -74,8 +68,12 @@
       widgetId: 3
     }),
     widgets = new CustomWidgetList([widg1, widg2, widg3]),
+    dummySave = function(collection, options) {
+      //do nothing
+    },
     gridview = new Marionette.WidgetGridView({
       collection: widgets,
+      autoSave: { callback:  dummySave, options: {} },
       gsOptions:  { vertical_margin: 20, animate: false, height: 10, width: 10 }
     });
 
