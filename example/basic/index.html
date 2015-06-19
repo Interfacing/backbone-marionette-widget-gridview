@@ -68,12 +68,8 @@
       widgetId: 3
     }),
     widgets = new CustomWidgetList([widg1, widg2, widg3]),
-    dummySave = function(collection, options) {
-      //do nothing
-    },
     gridview = new Marionette.WidgetGridView({
       collection: widgets,
-      autoSave: { callback:  dummySave, options: {} },
       gsOptions:  { vertical_margin: 20, animate: false, height: 10, width: 10 }
     });
 

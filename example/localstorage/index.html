@@ -59,12 +59,19 @@
       }
     }),
     ButtonWidgetView = CustomWidgetView.extend({
-      template: _.template('<div class="some-widget"><button class="close-btn">X</button><button><%= position() %></button></div>')
+      template: _.template('<div class="some-widget"><button class="close-btn">X</button><br><input type="text" name="Position" value=<%= position() %>></div>')
     }),
     CustomWidgetList = Backbone.WidgetList.extend({
       localStorage: new Backbone.LocalStorage("widgetlist-storage")
     }),
     saveCollectionOnLocalStorage = function(collection, options) {
+      var storage = window.localStorage.getItem('widgetlist-storage');
+      if (!_.isEmpty(storage)) {
+        var keys = storage.split(',');
+        _.each(keys, function(key) {
+          window.localStorage.removeItem('widgetlist-storage-' + key);
+        });
+      }
       collection.each(function(model) {
         model.save(null, { silent: true });
       });
@@ -72,7 +79,6 @@
 
   var newId = 0,
     views = { CustomWidgetView: CustomWidgetView, ButtonWidgetView: ButtonWidgetView },
-    //nonexistant view was in there
     arrViews = ["ButtonWidgetView", "CustomWidgetView"],
     widgets = new CustomWidgetList(),
     gridview = new Marionette.WidgetGridView({
@@ -112,11 +118,7 @@
   });
 
   $("#btn-remove-all-widget").click(function() {
-    //Using a collection.reset wouldn't clear the localstorage so we need to call destroy on every model
-    //Since destroying models while we iterate on the collection can generate unexpected results, we use underscore's clone function
-    _.chain(gridview.collection.models).clone().each(function(model){
-      model.destroy();
-    });
+    gridview.collection.reset();
   });
 
   $("#btn-render").click(function() {

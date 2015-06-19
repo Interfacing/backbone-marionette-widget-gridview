@@ -57,13 +57,10 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
   template: '#gridview-template',
 
   collectionEvents: {
-    'add':    'onAddModel',
-    'remove': 'onRemoveModel',
-    //'reset':  'resetView',
-    'change': 'onChangeModel',
-    all: function(e) {
-      console.log(e);
-    }
+    'add':    'onCollectionAdd',
+    'remove': 'onCollectionRemove',
+    'reset':  'onCollectionReset',
+    'change': 'onModelChange'
   },
 
   initialize: function(options) {
@@ -88,15 +85,28 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
     this.options.gsOptions = options;
   },
 
-  onChangeModel: function() {
+  onCollectionAdd: function(widget) {
+    this.saveCollection();
+    this.addWidgetView(widget);
+  },
+
+  onCollectionRemove: function(widget) {
+    this.saveCollection();
+    this.removeWidgetView(widget);
+  },
+
+  onCollectionReset: function() {
+    this.saveCollection();
+    this.resetGridView();
+  },
+
+  onModelChange: function() {
     this.saveCollection();
   },
 
   saveCollection: function() {
-    console.log('saving collection...');
     if (!_.isEmpty(this.autoSave)) {
       var options = this.autoSave.options;
-      console.log('options are : ' + options);
       if (!_.isEmpty(options) && _.isFunction(options)) {
         options = options();
       }
@@ -118,56 +128,53 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
   populateWidgetViews: function() {
     var self = this;
     this.collection.each(function(widget) {
-      self.onAddModel(widget);
+      self.onCollectionAdd(widget);
     });
   },
 
-  resetView: function(collection, options) {
-    this.gridstack.remove_all();
-    this.initializeGridstack();
-    this.populateWidgetViews();
-  },
-
-  onRemoveModel: function(widget) {
-    var widgetId = widget.get('widgetId'),
-        el       = this.$('#' + widgetId).closest('.grid-stack-item');
-
-    this.removeRegion(widgetId);
-    this.gridstack.remove_widget(el);
-    //temporary fix for issue : https://github.com/troolee/gridstack.js/issues/167
-    this.updateAllWidgetsAttributes();
-  },
-
-  onAddModel: function(widget) {
+  addWidgetView: function(widget) {
     var widgetInfo = widget.getGridstackAttributes();
-
     if (this.gridstack.will_it_fit(widgetInfo.x,
         widgetInfo.y,
         widgetInfo.width,
         widgetInfo.height,
         this.options.autoPos)) {
+
       this.gridstack.add_widget(widgetInfo.el,
         widgetInfo.x,
         widgetInfo.y,
         widgetInfo.width,
         widgetInfo.height,
         this.options.autoPos);
-
       if (this.options.autoPos) {
         this.updateWidgetAttributesById(widgetInfo.id);
-      } else {
-        this.saveCollection();
       }
-
       this.addRegion(widgetInfo.id, '#' + widgetInfo.id);
-      this.showWidget(widget);
+      this.showWidgetView(widget);
+
     } else {
       this.collection.remove(widget, { silent: true });
+      this.saveCollection();
       alert('Not enough free space to place the widget id : ' + widgetInfo.id);
     }
   },
 
-  showWidget: function(widget) {
+  removeWidgetView: function(widget) {
+    var widgetId = widget.get('widgetId'),
+        el       = this.$('#' + widgetId).closest('.grid-stack-item');
+    this.removeRegion(widgetId);
+    this.gridstack.remove_widget(el);
+    //temporary fix for issue : https://github.com/troolee/gridstack.js/issues/167
+    this.updateAllWidgetsAttributes();
+  },
+
+  resetGridView: function() {
+    this.gridstack.remove_all();
+    this.initializeGridstack();
+    this.populateWidgetViews();
+  },
+
+  showWidgetView: function(widget) {
     var view = this.getViewToShow(widget);
     this.listenTo(view, 'removeWidget', this.removeWidget);
     this.getRegion(widget.get('widgetId')).show(view);
@@ -195,7 +202,6 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
 
   removeWidget: function(widget) {
     this.collection.remove(widget);
-    this.saveCollection();
   },
 
   updateAllWidgetsAttributes: function() {
