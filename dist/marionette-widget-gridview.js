@@ -48,7 +48,7 @@ Marionette.WidgetView = Marionette.ItemView.extend({
     this.setElement(this.$el);
   },
 
-  onRemove: function() {
+  removeWidget: function() {
     this.trigger('removeWidget', this.model);
   }
 });
