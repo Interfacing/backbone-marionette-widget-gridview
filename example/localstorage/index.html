@@ -25,6 +25,9 @@
 <button type="button" id="btn-add-widget" class="grid-btn">Add Widget!</button>
 <button type="button" id="btn-remove-all-widget" class="grid-btn">Remove all widgets</button>
 <button type="button" id="btn-render" class="grid-btn">Render</button>
+<span> Gridstack options :  </span>
+<input type="checkbox" id="gsoption-float"> Float
+<input type="checkbox" id="gsoption-animate"> Animate
 <div id="main-container"></div>
 <script type="text/template" id="gridview-template">
   <div id="main-gridstack" class="grid-stack">
@@ -37,7 +40,7 @@
 <script src="../../node_modules/backbone/backbone-min.js"></script>
 <script src="../../node_modules/backbone.marionette/lib/backbone.marionette.min.js"></script>
 <script src="../../src/lib/gridstack/gridstack.min.js"></script>
-<script src="../lib/backbone.localstorage/backbone.localStorage-min.js"></script>
+<script src="backbone.localstorage/backbone.localStorage-min.js"></script>
 <script src="../../dist/marionette-widget-gridview.js"></script>
 
 <script>
@@ -75,6 +78,9 @@
       collection.each(function(model) {
         model.save(null, { silent: true });
       });
+    },
+    getGridstackOptions = function() {
+      return { vertical_margin: 20, animate: $('#gsoption-animate').is(':checked'), float: $('#gsoption-float').is(':checked'), height: 10, width: 10 }
     };
 
   var newId = 0,
@@ -86,7 +92,7 @@
       customViews: views,
       autoPos:     false,
       autoSave: { callback:  saveCollectionOnLocalStorage },
-      gsOptions:   { vertical_margin: 20, animate: false, height: 10, width: 10 }
+      gsOptions:   getGridstackOptions()
     });
 
   $('#main-container').html(gridview.$el);
@@ -122,6 +128,7 @@
   });
 
   $("#btn-render").click(function() {
+    gridview.setGridstackOptions(getGridstackOptions());
     gridview.setAutoPos(false);
     gridview.render();
     gridview.setAutoPos(true);

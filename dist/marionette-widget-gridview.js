@@ -128,7 +128,7 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
   populateWidgetViews: function() {
     var self = this;
     this.collection.each(function(widget) {
-      self.onCollectionAdd(widget);
+      self.addWidgetView(widget);
     });
   },
 
