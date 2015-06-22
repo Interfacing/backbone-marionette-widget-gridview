@@ -8,6 +8,7 @@ Using `Backbone.js`, `Marionette.js` and `gridstack.js` to render a grid view of
 - `Blue` are the Backbone Marionette Widget Gridview classes.
 - `Green` are the custom classes created by you to customize the widget gridview.
 
+
 Here is the definition of the classes shown in the diagram above:
 - The `Backbone.Widget` is a `Backbone.Model` that has different properties about the widget in the grid view. The most important properties are the position (x and y inside the grid), width and height and lastly the type of view associated with this widget.
 - The `Backbone.WidgetList` is a `Backbone.Collection` that holds multiple `Backbone.Widget`s. It is possible to extend the `Backbone.WidgetList` to make your custom collection. In the [localstorage example](https://github.com/Interfacing/backbone-marionette-widget-gridview/blob/marionette-logic/example/localstorage/index.html), a custom collection is created to use with [backbone.localstorage](https://github.com/jeromegn/Backbone.localStorage)
@@ -37,7 +38,7 @@ Interactions between the classes :
 - Add and remove widgets to the gridview.
 - Save a collection of widgets using a custom defined method to save (see `saveCollectionOnLocalStorage` function in [example/localstorage/index.html](https://github.com/Interfacing/backbone-marionette-widget-gridview/blob/marionette-logic/example/localstorage/index.html)).
 
-## Render a  `Marionette.WidgetGridView`
+## Display a  `Marionette.WidgetGridView`
 1. Create some `Backbone.Widget`s
 2. Create a `Backbone.WidgetList` with the created widgets
 3. Create a `Marionette.WidgetGridView` and pass as the parameters the collection you created and some [options](#options)
@@ -73,9 +74,9 @@ You can see an example of doing so by taking a look at the localstorage example 
 
 
 ## Rendering
-- When a `Marionette.WidgetGridView` is `render()`ed, it will initialize gridstack with the current `gsOptions` and then proceed to add a custom view to the grid view for every model inside the current collection.
+ When a `Marionette.WidgetGridView` is `render()`ed, it will initialize gridstack with the current `gsOptions` and then proceed to add a custom view to the grid view for every model inside the current collection.
 
-**- When a `Marionette.WidgetView` is rendered, it will only render the root element. That means that when you define the template of your custom views, you should always regroup your view's html into a single element at the top level. . In the [localstorage example](https://github.com/Interfacing/backbone-marionette-widget-gridview/blob/marionette-logic/example/localstorage/index.html), the content of the views are contained into a single `<div></div>` html tag**
+**When a `Marionette.WidgetView` is rendered, it will only render the root element. That means that when you define the template of your custom views, you should always regroup your view's html into a single element at the top level. . In the [localstorage example](https://github.com/Interfacing/backbone-marionette-widget-gridview/blob/marionette-logic/example/localstorage/index.html), the content of the views are contained into a single `<div></div>` html tag**
 
 
 ## Changelog
