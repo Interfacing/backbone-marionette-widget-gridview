@@ -27,18 +27,6 @@ module.exports = function(grunt) {
       }
     },
 
-    mince: {
-      main: {
-        options: {
-          include: ["src/js"]
-        },
-        files: [{
-          src: ["src/js/widget.js", "src/js/widget-view.js", "src/js/widget-gridview.js"],
-          dest: "dist/marionette-widget-gridview.js"
-        }]
-      }
-    },
-
     uglify: {
       main: {
         options: {
@@ -46,12 +34,17 @@ module.exports = function(grunt) {
           mangle: true
         },
         files: {
-          'dist/marionette-widget-gridview.min.js': [
-            'src/js/widget.js',
-            'src/js/widget-view.js',
-            'src/js/widget-gridview.js'
+          'dist/marionette.gridview.min.js': [
+            'dist/marionette.gridview.js'
           ]
         }
+      }
+    },
+
+    preprocess: {
+      bundle: {
+        src: 'src/js/build/bundled.js',
+        dest: 'dist/marionette.gridview.js'
       }
     },
 
@@ -110,7 +103,7 @@ module.exports = function(grunt) {
 
       js: {
         files: ['src/js/**/*.js'],
-        tasks: ['mince', 'uglify'],
+        tasks: ['preprocess', 'uglify'],
         options: {
           spawn: false,
           debounceDelay: 200
@@ -120,6 +113,7 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-mincer');
+  grunt.loadNpmTasks('grunt-preprocess');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -129,6 +123,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-protractor-runner');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default',  ['clean', 'less', 'mince', 'uglify', 'cssmin', 'watch']);
+  grunt.registerTask('default',  ['clean', 'less', 'preprocess', 'uglify', 'cssmin', 'watch']);
   grunt.registerTask('test',  [ 'karma']);
 };

@@ -1,8 +1,10 @@
-Backbone.Widget = Backbone.Model.extend({
+var DEFAULT_WIDGET_VIEW = 'WidgetView',
+    DEFAULT_WIDGET_NAME = 'No Name';
+
+GridView.Widget = Backbone.Model.extend({
   defaults: {
-    type:     'default',
-    viewType: 'WidgetView',
-    name:     'noname',
+    viewType: DEFAULT_WIDGET_VIEW,
+    name:     DEFAULT_WIDGET_NAME,
     x:        0,
     y:        0,
     width:    0,
@@ -26,11 +28,11 @@ Backbone.Widget = Backbone.Model.extend({
   },
 
   getDefaultView: function() {
-    return 'WidgetView';
+    return DEFAULT_WIDGET_VIEW;
   }
 
 });
 
-Backbone.WidgetList = Backbone.Collection.extend({
-  model: Backbone.Widget
+GridView.WidgetList = Backbone.Collection.extend({
+  model: GridView.Widget
 });

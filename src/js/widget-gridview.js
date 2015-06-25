@@ -1,4 +1,4 @@
-Marionette.WidgetGridView = Marionette.LayoutView.extend({
+GridView.WidgetGridView = Marionette.LayoutView.extend({
   template: '#gridview-template',
 
   collectionEvents: {
@@ -13,7 +13,7 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
     options.gsOptions = options.gsOptions || {};
     this.autoSave = options.autoSave;
 
-    if (!options.hasOwnProperty('autoPos')) {
+    if (!_.isUndefined(options.autoPos)) {
       options.autoPos = true;
     }
     if (!options.collection) {
@@ -51,8 +51,8 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
 
   saveCollection: function() {
     if (!_.isEmpty(this.autoSave)) {
-      var options = this.autoSave.options;
-      if (!_.isEmpty(options) && _.isFunction(options)) {
+      var options = this.autoSave.options || {};
+      if (_.isFunction(options)) {
         options = options();
       }
       this.autoSave.callback(this.collection, options);
@@ -106,9 +106,10 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
 
   removeWidgetView: function(widget) {
     var widgetId = widget.get('widgetId'),
-        el       = this.$('#' + widgetId).closest('.grid-stack-item');
+        $el       = this.$('#' + widgetId).closest('.grid-stack-item');
+
     this.removeRegion(widgetId);
-    this.gridstack.remove_widget(el);
+    this.gridstack.remove_widget($el);
     //temporary fix for issue : https://github.com/troolee/gridstack.js/issues/167
     this.updateAllWidgetsAttributes();
   },
@@ -121,39 +122,36 @@ Marionette.WidgetGridView = Marionette.LayoutView.extend({
 
   showWidgetView: function(widget) {
     var view = this.getViewToShow(widget);
-    this.listenTo(view, 'removeWidget', this.removeWidget);
+    this.listenTo(view, 'remove:widget', this.removeWidget);
     this.getRegion(widget.get('widgetId')).show(view);
   },
 
   getViewToShow: function(widget) {
-    var view;
     if (!this.options.customViews) {
       if (!widget.isDefaultView()) {
         widget.set('viewType', widget.getDefaultView());
       }
-      view = new Marionette.WidgetView({ model: widget });
+      return new Marionette.GridView.WidgetView({ model: widget });
     } else {
       if (this.options.customViews[widget.get('viewType')]) {
-        view = new this.options.customViews[widget.get('viewType')]({ model: widget });
+        return new this.options.customViews[widget.get('viewType')]({ model: widget });
       } else {
         if (!widget.isDefaultView()) {
           widget.set('viewType', widget.getDefaultView());
         }
-        view = new Marionette.WidgetView({ model: widget });
+        return new Marionette.GridView.WidgetView({ model: widget });
       }
     }
-    return view;
   },
 
-  removeWidget: function(widget) {
-    this.collection.remove(widget);
+  removeWidget: function(args) {
+    this.collection.remove(args.model);
   },
 
   updateAllWidgetsAttributes: function() {
-    var self = this;
     this.collection.each(function(widget) {
-      self.updateWidgetAttributesById(widget.get('widgetId'));
-    });
+      this.updateWidgetAttributesById(widget.get('widgetId'));
+    }, this);
   },
 
   updateWidgetAttributesById: function(id) {

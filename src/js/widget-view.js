@@ -1,4 +1,4 @@
-Marionette.WidgetView = Marionette.ItemView.extend({
+GridView.WidgetView = Marionette.ItemView.extend({
   template: _.template('<div class="some-widget"><p>default view</p></div>'),
 
   modelEvents: {
@@ -9,9 +9,5 @@ Marionette.WidgetView = Marionette.ItemView.extend({
     this.$el = this.$el.children();
     this.$el.unwrap();
     this.setElement(this.$el);
-  },
-
-  removeWidget: function() {
-    this.trigger('removeWidget', this.model);
   }
 });

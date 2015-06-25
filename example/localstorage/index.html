@@ -41,16 +41,16 @@
 <script src="../../node_modules/backbone.marionette/lib/backbone.marionette.min.js"></script>
 <script src="../../src/lib/gridstack/gridstack.min.js"></script>
 <script src="backbone.localstorage/backbone.localStorage-min.js"></script>
-<script src="../../dist/marionette-widget-gridview.js"></script>
+<script src="../../dist/marionette.gridview.js"></script>
 
 <script>
-  var CustomWidgetView = Marionette.WidgetView.extend({
+  var CustomWidgetView = Marionette.GridView.WidgetView.extend({
       template: _.template('<div class="some-widget"><button class="close-btn">X</button><p><%= position() %></p></div>'),
       ui:       {
         close: '.close-btn'
       },
-      events:   {
-        'click @ui.close': 'removeWidget'
+      triggers:   {
+        'click @ui.close': 'remove:widget'
       },
 
       templateHelpers: function() {
@@ -64,7 +64,7 @@
     ButtonWidgetView = CustomWidgetView.extend({
       template: _.template('<div class="some-widget"><button class="close-btn">X</button><br><input type="text" name="Position" value=<%= position() %>></div>')
     }),
-    CustomWidgetList = Backbone.WidgetList.extend({
+    CustomWidgetList = Marionette.GridView.WidgetList.extend({
       localStorage: new Backbone.LocalStorage("widgetlist-storage")
     }),
     saveCollectionOnLocalStorage = function(collection, options) {
@@ -87,7 +87,7 @@
     views = { CustomWidgetView: CustomWidgetView, ButtonWidgetView: ButtonWidgetView },
     arrViews = ["ButtonWidgetView", "CustomWidgetView"],
     widgets = new CustomWidgetList(),
-    gridview = new Marionette.WidgetGridView({
+    gridview = new Marionette.GridView.WidgetGridView({
       collection:  widgets,
       customViews: views,
       autoPos:     false,
@@ -111,7 +111,7 @@
   };
   $("#btn-add-widget").click(function() {
     newId++;
-    gridview.collection.add(new Backbone.Widget({
+    gridview.collection.add(new Marionette.GridView.Widget({
       type:     'button',
       viewType: randomView(),
       name:     'some widget',

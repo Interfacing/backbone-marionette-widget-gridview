@@ -9,6 +9,10 @@
     "grid",
     "gridstack"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Interfacing/backbone-marionette-widget-gridview.git"
+  },
   "dependencies": {
     "backbone": "1.1.2",
     "backbone.marionette": "2.4.1",
@@ -32,5 +36,9 @@
     "karma-sauce-launcher": "^0.2.10",
     "karma-webdriver-launcher": "1.0.1",
     "underscore": "1.8.3"
+  },
+  "devDependencies": {
+    "cucumber": "^0.5.1",
+    "grunt-preprocess": "^4.2.0"
   }
 }
