@@ -17,7 +17,7 @@ Here is the definition of the classes shown in the diagram above:
 
 Interactions between the classes :
 - When you modify `Marionette.WidgetGridView`'s collection y adding or removing a widget, it will automatically update the grid view by adding or removing `Marionette.WidgetView`
-- All `Marionette.WidgetView`s have the `removeWidget()` function that should be called when you want to remove this widget from the grid view, for example by clicking on a close button. This function will trigger an event that will be received by the `Marionette.WidgetGridView` and it will then proceed to remove the widget view from the grid.
+- Your custom `Marionette.WidgetView`s should have a way to trigger a `remove:widget` event, like by clicking on a close button inside the view (see the [localstorage example](https://github.com/Interfacing/backbone-marionette-widget-gridview/blob/marionette-logic/example/localstorage/index.html) on how to do that). The event will be catched by the `Marionette.WidgetGridView` and it will then proceed to remove the widget view from the grid.
 - When there is a modification to the grid, be it the position or size of widgets that changed, the models inside the collection of `Marionette.WidgetGridView` will be updated and the collection will be saved using the `autoSave` [options](#options)'s save callback.
 
 ## Installation
@@ -63,7 +63,7 @@ Options for gridstack.js : Look at the [gridstack docs](https://github.com/trool
 | Event Name    | Triggered When | Associated Callback     | Callback functionality |
 | ------------- | -------------- | ----------------------- | ---------------------- |
 | `add`    |  a `Backbone.Widget` is added to the `Backbone.WidgetList` that was passed when creating the `Marionette.WidgetGridView` | `onCollectionAdd`  | add the `Backbone.Widget`'s associated `Marionette.WidgetView` to the gridview |
-| `remove`    | a `Backbone.Widget` is removed from the `Backbone.WidgetList`. It is also triggered when you make a `Backbone.Widget`'s associated `Marionette.WidgetView` call its `removeWidget()`. | `onCollectionRemove` |  remove the `Backbone.Widget`'s associated `Marionette.WidgetView` from the gridview | 
+| `remove`    | a `Backbone.Widget` is removed from the `Backbone.WidgetList`. It is also triggered when you make a `Backbone.Widget`'s associated `Marionette.WidgetView` trigger a `remove:widget` event. | `onCollectionRemove` |  remove the `Backbone.Widget`'s associated `Marionette.WidgetView` from the gridview | 
 | `reset`    | a `reset()` is called on the `Backbone.WidgetList` | `onCollectionReset`     |  remove all the widgets from the gridview, re-initialize `Gridstack` and update the gridview if there are new `Backbone.Widget` in the collection |
 | `change`    | a `Backbone.Widget`'s attribute changes | `onModelChange`     |  save the entire collection using the save callback that was passed when creating the `Marionette.WidgetGridView` |
 
