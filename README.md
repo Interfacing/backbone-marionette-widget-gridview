@@ -11,13 +11,13 @@ Using `Backbone.js`, `Marionette.js` and `gridstack.js` to render a grid view of
 
 Here is the definition of the classes shown in the diagram above:
 - The `Backbone.Widget` is a `Backbone.Model` that has different properties about the widget in the grid view. The most important properties are the position (x and y inside the grid), width and height and lastly the type of view associated with this widget.
-- The `Backbone.WidgetList` is a `Backbone.Collection` that holds multiple `Backbone.Widget`s. It is possible to extend the `Backbone.WidgetList` to make your custom collection. In the [localstorage example](https://github.com/Interfacing/backbone-marionette-widget-gridview/blob/marionette-logic/example/localstorage/index.html), a custom collection is created to use with [backbone.localstorage](https://github.com/jeromegn/Backbone.localStorage)
+- The `Backbone.WidgetList` is a `Backbone.Collection` that holds multiple `Backbone.Widget`s. It is possible to extend the `Backbone.WidgetList` to make your custom collection. In the [localstorage example](https://github.com/Interfacing/backbone-marionette-widget-gridview/blob/master/example/localstorage/index.html), a custom collection is created to use with [backbone.localstorage](https://github.com/jeromegn/Backbone.localStorage)
 - `Marionette.WidgetView` is a `Marionette.ItemView` and it's there so you can extend it and create your own custom views with custom templates. 
 - `Marionette.WidgetGridView` is a `Marionette.LayoutView`. A `Backbone.WidgetList` should be passed when creating this view. The `Marionette.WidgetGridView` will create a `Marionette.Region` for every model inside its collection. When `render()` is called on this view, it will proceed to create and show a view for every model based on the model's `viewType` property. 
 
 Interactions between the classes :
 - When you modify `Marionette.WidgetGridView`'s collection y adding or removing a widget, it will automatically update the grid view by adding or removing `Marionette.WidgetView`
-- Your custom `Marionette.WidgetView`s should have a way to trigger a `remove:widget` event, like by clicking on a close button inside the view (see the [localstorage example](https://github.com/Interfacing/backbone-marionette-widget-gridview/blob/marionette-logic/example/localstorage/index.html) on how to do that). The event will be catched by the `Marionette.WidgetGridView` and it will then proceed to remove the widget view from the grid.
+- Your custom `Marionette.WidgetView`s should have a way to trigger a `remove:widget` event, like by clicking on a close button inside the view (see the [localstorage example](https://github.com/Interfacing/backbone-marionette-widget-gridview/blob/master/example/localstorage/index.html) on how to do that). The event will be catched by the `Marionette.WidgetGridView` and it will then proceed to remove the widget view from the grid.
 - When there is a modification to the grid, be it the position or size of widgets that changed, the models inside the collection of `Marionette.WidgetGridView` will be updated and the collection will be saved using the `autoSave` [options](#options)'s save callback.
 
 ## Installation
@@ -36,7 +36,7 @@ Interactions between the classes :
 ## Features
 - Move and resize widgets based on the functionality present in `gridstack.js`.
 - Add and remove widgets to the gridview.
-- Save a collection of widgets using a custom defined method to save (see `saveCollectionOnLocalStorage` function in [example/localstorage/index.html](https://github.com/Interfacing/backbone-marionette-widget-gridview/blob/marionette-logic/example/localstorage/index.html)).
+- Save a collection of widgets using a custom defined method to save (see `saveCollectionOnLocalStorage` function in [example/localstorage/index.html](https://github.com/Interfacing/backbone-marionette-widget-gridview/blob/master/example/localstorage/index.html)).
 
 ## Display a  `Marionette.WidgetGridView`
 1. Create some `Backbone.Widget`s
@@ -46,7 +46,7 @@ Interactions between the classes :
 5. Have fun with the widgets
 
 ## Basic Usage
-Look at the [basic example](https://github.com/Interfacing/backbone-marionette-widget-gridview/blob/marionette-logic/example/basic/index.html) for the simplest way to use this library !
+Look at the [basic example](https://github.com/Interfacing/backbone-marionette-widget-gridview/blob/master/example/basic/index.html) for the simplest way to use this library !
 
 ## Options
 Options for WidgetGridView :
@@ -70,7 +70,7 @@ Options for gridstack.js : Look at the [gridstack docs](https://github.com/trool
 
 ## Customize
 The principle customization is to extend the `Marionette.WidgetView` to make your own custom widget views !
-You can see an example of doing so by taking a look at the localstorage example that comes with this library at [example/localstorage/index.html](https://github.com/Interfacing/backbone-marionette-widget-gridview/blob/marionette-logic/example/localstorage/index.html)
+You can see an example of doing so by taking a look at the localstorage example that comes with this library at [example/localstorage/index.html](https://github.com/Interfacing/backbone-marionette-widget-gridview/blob/master/example/localstorage/index.html)
 
 
 ## Rendering
@@ -83,3 +83,4 @@ You can see an example of doing so by taking a look at the localstorage example 
 
 ##### Version 1.0.0
 - Implemented the basic functionalities of adding and removing widgets, saving the entire collection of widgets.
+- Support of AMD
