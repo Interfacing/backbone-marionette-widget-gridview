@@ -1,7 +1,7 @@
 {
   "name": "backbone-marionette-widget-gridview",
   "description": "Widget grid view based on MarionetteJS and GridstackJS",
-  "version": "1.2.0",
+  "version": "1.0.0",
   "keywords": [
     "marionette",
     "backbone",
@@ -9,6 +9,10 @@
     "grid",
     "gridstack"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Interfacing/backbone-marionette-widget-gridview.git"
+  },
   "dependencies": {
     "backbone": "1.1.2",
     "backbone.marionette": "2.4.1",
@@ -20,6 +24,7 @@
     "grunt-contrib-jshint": "0.11.0",
     "grunt-contrib-less": "1.0.0",
     "grunt-contrib-uglify": "0.8.0",
+    "grunt-contrib-watch": "0.6.1",
     "grunt-karma": "0.10.1",
     "grunt-mincer": "1.0.0",
     "grunt-protractor-runner": "1.2.1",
@@ -31,5 +36,9 @@
     "karma-sauce-launcher": "^0.2.10",
     "karma-webdriver-launcher": "1.0.1",
     "underscore": "1.8.3"
+  },
+  "devDependencies": {
+    "cucumber": "^0.5.1",
+    "grunt-preprocess": "^4.2.0"
   }
 }

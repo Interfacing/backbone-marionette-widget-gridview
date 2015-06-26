@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width initial-scale=1"/>
+  <link rel='stylesheet' href='../../dist/marionette-widget-gridview.min.css'/>
+  <link href="../../src/lib/gridstack/gridstack.min.css" rel="stylesheet">
+  <style>
+    .grid-btn {
+      margin: 10px;
+    }
+
+    #main-gridstack {
+      background-color: #00A000;
+    }
+
+    .grid-stack-item-content {
+      background-color: #00b3ee;
+      cursor: move;
+    }
+  </style>
+  <title>Example using localStorage</title>
+</head>
+<body>
+<button type="button" id="btn-add-widget" class="grid-btn">Add Widget!</button>
+<button type="button" id="btn-remove-all-widget" class="grid-btn">Remove all widgets</button>
+<button type="button" id="btn-render" class="grid-btn">Render</button>
+<span> Gridstack options :  </span>
+<input type="checkbox" id="gsoption-float"> Float
+<input type="checkbox" id="gsoption-animate"> Animate
+<div id="main-container"></div>
+<script type="text/template" id="gridview-template">
+  <div id="main-gridstack" class="grid-stack">
+  </div>
+</script>
+
+<script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+<script src="../../node_modules/jquery-ui/jquery-ui.min.js"></script>
+<script src="../../node_modules/underscore/underscore-min.js"></script>
+<script src="../../node_modules/backbone/backbone-min.js"></script>
+<script src="../../node_modules/backbone.marionette/lib/backbone.marionette.min.js"></script>
+<script src="../../src/lib/gridstack/gridstack.min.js"></script>
+<script src="backbone.localstorage/backbone.localStorage-min.js"></script>
+<script src="../../dist/marionette.gridview.js"></script>
+
+<script>
+  var CustomWidgetView = Marionette.GridView.WidgetView.extend({
+      template: _.template('<div class="some-widget"><button class="close-btn">X</button><p><%= position() %></p></div>'),
+      ui:       {
+        close: '.close-btn'
+      },
+      triggers:   {
+        'click @ui.close': 'remove:widget'
+      },
+
+      templateHelpers: function() {
+        return {
+          position: function() {
+            return '(' + this.x + ',' + this.y + ')';
+          }
+        };
+      }
+    }),
+    ButtonWidgetView = CustomWidgetView.extend({
+      template: _.template('<div class="some-widget"><button class="close-btn">X</button><br><input type="text" name="Position" value=<%= position() %>></div>')
+    }),
+    CustomWidgetList = Marionette.GridView.WidgetList.extend({
+      localStorage: new Backbone.LocalStorage("widgetlist-storage")
+    }),
+    saveCollectionOnLocalStorage = function(collection, options) {
+      var storage = window.localStorage.getItem('widgetlist-storage');
+      if (!_.isEmpty(storage)) {
+        var keys = storage.split(',');
+        _.each(keys, function(key) {
+          window.localStorage.removeItem('widgetlist-storage-' + key);
+        });
+      }
+      collection.each(function(model) {
+        model.save(null, { silent: true });
+      });
+    },
+    getGridstackOptions = function() {
+      return { vertical_margin: 20, animate: $('#gsoption-animate').is(':checked'), float: $('#gsoption-float').is(':checked'), height: 10, width: 10 }
+    };
+
+  var newId = 0,
+    views = { CustomWidgetView: CustomWidgetView, ButtonWidgetView: ButtonWidgetView },
+    arrViews = ["ButtonWidgetView", "CustomWidgetView"],
+    widgets = new CustomWidgetList(),
+    gridview = new Marionette.GridView.WidgetGridView({
+      collection:  widgets,
+      customViews: views,
+      autoPos:     false,
+      autoSave: { callback:  saveCollectionOnLocalStorage },
+      gsOptions:   getGridstackOptions()
+    });
+
+  $('#main-container').html(gridview.$el);
+  gridview.render();
+  widgets.fetch();
+  gridview.setAutoPos(true);
+
+  widgets.each(function(wdgt) {
+    if (wdgt.get('widgetId') > newId) {
+      newId = wdgt.get('widgetId');
+    }
+  });
+
+  var randomView = function() {
+    return arrViews[Math.floor((Math.random() * arrViews.length))];
+  };
+  $("#btn-add-widget").click(function() {
+    newId++;
+    gridview.collection.add(new Marionette.GridView.Widget({
+      type:     'button',
+      viewType: randomView(),
+      name:     'some widget',
+      width:    2,
+      height:   2,
+      x:        0,
+      y:        0,
+      widgetId: newId
+    }));
+  });
+
+  $("#btn-remove-all-widget").click(function() {
+    gridview.collection.reset();
+  });
+
+  $("#btn-render").click(function() {
+    gridview.setGridstackOptions(getGridstackOptions());
+    gridview.setAutoPos(false);
+    gridview.render();
+    gridview.setAutoPos(true);
+  });
+
+</script>
+</body>
+</html>

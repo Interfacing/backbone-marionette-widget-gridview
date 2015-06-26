@@ -27,18 +27,6 @@ module.exports = function(grunt) {
       }
     },
 
-    mince: {
-      main: {
-        options: {
-          include: ["src/js"]
-        },
-        files: [{
-          src: ["src/js/node.js"],
-          dest: "dist/marionette-widget-gridview.js"
-        }]
-      }
-    },
-
     uglify: {
       main: {
         options: {
@@ -46,10 +34,17 @@ module.exports = function(grunt) {
           mangle: true
         },
         files: {
-          'dist/marionette-widget-gridview.min.js': [
-            'src/js/node.js'
+          'dist/marionette.gridview.min.js': [
+            'dist/marionette.gridview.js'
           ]
         }
+      }
+    },
+
+    preprocess: {
+      bundle: {
+        src: 'src/js/build/bundled.js',
+        dest: 'dist/marionette.gridview.js'
       }
     },
 
@@ -94,10 +89,31 @@ module.exports = function(grunt) {
           configFile: 'test/e2e/config.js'
         }
       }
+    },
+
+    watch: {
+      css: {
+        files: ['src/less/**/*.*'],
+        tasks: ['less', 'cssmin'],
+        options: {
+          spawn: false,
+          debounceDelay: 200
+        }
+      },
+
+      js: {
+        files: ['src/js/**/*.js'],
+        tasks: ['preprocess', 'uglify'],
+        options: {
+          spawn: false,
+          debounceDelay: 200
+        }
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-mincer');
+  grunt.loadNpmTasks('grunt-preprocess');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -105,7 +121,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-protractor-runner');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default',  ['clean', 'less', 'jshint', 'mince', 'uglify', 'cssmin']);
+  grunt.registerTask('default',  ['clean', 'less', 'preprocess', 'uglify', 'cssmin', 'watch']);
   grunt.registerTask('test',  [ 'karma']);
 };
