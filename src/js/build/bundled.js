@@ -4,6 +4,11 @@
         define(['underscore', 'backbone', 'backbone.marionette'], function(_, Backbone, Marionette) {
             return factory(root, _, Backbone, Marionette);
         });
+    } else if (typeof exports !== 'undefined') {
+      var Backbone = require('backbone');
+      var _ = require('underscore');
+      var Marionette = require('backbone.marionette');
+      module.exports = factory(root, _, Backbone, Marionette);
     } else {
         root.Marionette.GridView = factory(root, root._, root.Backbone, root.Marionette);
     }

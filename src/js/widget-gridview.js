@@ -1,5 +1,5 @@
 GridView.WidgetGridView = Marionette.LayoutView.extend({
-  template: '#gridview-template',
+  template: _.template('<div id="main-gridstack" class="grid-stack">  </div>'),
 
   collectionEvents: {
     'add':    'onCollectionAdd',
@@ -13,7 +13,7 @@ GridView.WidgetGridView = Marionette.LayoutView.extend({
     options.gsOptions = options.gsOptions || {};
     this.autoSave = options.autoSave;
 
-    if (!_.isUndefined(options.autoPos)) {
+    if (_.isUndefined(options.autoPos)) {
       options.autoPos = true;
     }
     if (!options.collection) {
@@ -71,10 +71,9 @@ GridView.WidgetGridView = Marionette.LayoutView.extend({
   },
 
   populateWidgetViews: function() {
-    var self = this;
     this.collection.each(function(widget) {
-      self.addWidgetView(widget);
-    });
+      this.addWidgetView(widget);
+    }, this);
   },
 
   addWidgetView: function(widget) {
@@ -131,7 +130,7 @@ GridView.WidgetGridView = Marionette.LayoutView.extend({
       if (!widget.isDefaultView()) {
         widget.set('viewType', widget.getDefaultView());
       }
-      return new Marionette.GridView.WidgetView({ model: widget });
+      return new GridView.WidgetView({ model: widget });
     } else {
       if (this.options.customViews[widget.get('viewType')]) {
         return new this.options.customViews[widget.get('viewType')]({ model: widget });
@@ -139,7 +138,7 @@ GridView.WidgetGridView = Marionette.LayoutView.extend({
         if (!widget.isDefaultView()) {
           widget.set('viewType', widget.getDefaultView());
         }
-        return new Marionette.GridView.WidgetView({ model: widget });
+        return new GridView.WidgetView({ model: widget });
       }
     }
   },
