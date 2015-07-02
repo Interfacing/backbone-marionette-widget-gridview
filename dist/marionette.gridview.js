@@ -4,6 +4,11 @@
         define(['underscore', 'backbone', 'backbone.marionette'], function(_, Backbone, Marionette) {
             return factory(root, _, Backbone, Marionette);
         });
+    } else if (typeof exports !== 'undefined') {
+      var Backbone = require('backbone');
+      var _ = require('underscore');
+      var Marionette = require('backbone.marionette');
+      module.exports = factory(root, _, Backbone, Marionette);
     } else {
         root.Marionette.GridView = factory(root, root._, root.Backbone, root.Marionette);
     }
@@ -20,8 +25,8 @@
       name:     DEFAULT_WIDGET_NAME,
       x:        0,
       y:        0,
-      width:    0,
-      height:   0,
+      width:    1,
+      height:   1,
       widgetId: 0
     },
   
@@ -51,7 +56,7 @@
   });
   
   GridView.WidgetView = Marionette.ItemView.extend({
-    template: _.template('<div class="some-widget"><p>default view</p></div>'),
+    template: _.template('<div class="default-widget"><p>default view</p></div>'),
   
     modelEvents: {
       'change': 'render'
@@ -65,7 +70,7 @@
   });
   
   GridView.WidgetGridView = Marionette.LayoutView.extend({
-    template: '#gridview-template',
+    template: _.template('<div id="main-gridstack" class="grid-stack">  </div>'),
   
     collectionEvents: {
       'add':    'onCollectionAdd',
@@ -77,9 +82,8 @@
     initialize: function(options) {
       options = options || {};
       options.gsOptions = options.gsOptions || {};
-      this.autoSave = options.autoSave;
   
-      if (!_.isUndefined(options.autoPos)) {
+      if (_.isUndefined(options.autoPos)) {
         options.autoPos = true;
       }
       if (!options.collection) {
@@ -116,12 +120,12 @@
     },
   
     saveCollection: function() {
-      if (!_.isEmpty(this.autoSave)) {
-        var options = this.autoSave.options || {};
+      if (!_.isEmpty(this.options.autoSave)) {
+        var options = this.options.autoSave.options || {};
         if (_.isFunction(options)) {
           options = options();
         }
-        this.autoSave.callback(this.collection, options);
+        this.options.autoSave.callback(this.collection, options);
       }
     },
   
@@ -137,10 +141,9 @@
     },
   
     populateWidgetViews: function() {
-      var self = this;
       this.collection.each(function(widget) {
-        self.addWidgetView(widget);
-      });
+        this.addWidgetView(widget);
+      }, this);
     },
   
     addWidgetView: function(widget) {
@@ -197,7 +200,7 @@
         if (!widget.isDefaultView()) {
           widget.set('viewType', widget.getDefaultView());
         }
-        return new Marionette.GridView.WidgetView({ model: widget });
+        return new GridView.WidgetView({ model: widget });
       } else {
         if (this.options.customViews[widget.get('viewType')]) {
           return new this.options.customViews[widget.get('viewType')]({ model: widget });
@@ -205,7 +208,7 @@
           if (!widget.isDefaultView()) {
             widget.set('viewType', widget.getDefaultView());
           }
-          return new Marionette.GridView.WidgetView({ model: widget });
+          return new GridView.WidgetView({ model: widget });
         }
       }
     },

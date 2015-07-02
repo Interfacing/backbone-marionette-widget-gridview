@@ -7,8 +7,8 @@ GridView.Widget = Backbone.Model.extend({
     name:     DEFAULT_WIDGET_NAME,
     x:        0,
     y:        0,
-    width:    0,
-    height:   0,
+    width:    1,
+    height:   1,
     widgetId: 0
   },
 

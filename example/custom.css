@@ -1,0 +1,8 @@
+#main-gridstack {
+    background-color: #00A000;
+}
+
+.grid-stack-item-content {
+    background-color: #00b3ee;
+    cursor: move;
+}
