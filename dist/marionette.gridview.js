@@ -56,7 +56,7 @@
   });
   
   GridView.WidgetView = Marionette.ItemView.extend({
-    template: _.template('<div class="some-widget"><p>default view</p></div>'),
+    template: _.template('<div class="default-widget"><p>default view</p></div>'),
   
     modelEvents: {
       'change': 'render'
@@ -82,7 +82,6 @@
     initialize: function(options) {
       options = options || {};
       options.gsOptions = options.gsOptions || {};
-      this.autoSave = options.autoSave;
   
       if (_.isUndefined(options.autoPos)) {
         options.autoPos = true;
@@ -121,12 +120,12 @@
     },
   
     saveCollection: function() {
-      if (!_.isEmpty(this.autoSave)) {
-        var options = this.autoSave.options || {};
+      if (!_.isEmpty(this.options.autoSave)) {
+        var options = this.options.autoSave.options || {};
         if (_.isFunction(options)) {
           options = options();
         }
-        this.autoSave.callback(this.collection, options);
+        this.options.autoSave.callback(this.collection, options);
       }
     },
   

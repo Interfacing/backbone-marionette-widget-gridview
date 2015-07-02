@@ -11,7 +11,6 @@ GridView.WidgetGridView = Marionette.LayoutView.extend({
   initialize: function(options) {
     options = options || {};
     options.gsOptions = options.gsOptions || {};
-    this.autoSave = options.autoSave;
 
     if (_.isUndefined(options.autoPos)) {
       options.autoPos = true;
@@ -50,12 +49,12 @@ GridView.WidgetGridView = Marionette.LayoutView.extend({
   },
 
   saveCollection: function() {
-    if (!_.isEmpty(this.autoSave)) {
-      var options = this.autoSave.options || {};
+    if (!_.isEmpty(this.options.autoSave)) {
+      var options = this.options.autoSave.options || {};
       if (_.isFunction(options)) {
         options = options();
       }
-      this.autoSave.callback(this.collection, options);
+      this.options.autoSave.callback(this.collection, options);
     }
   },
 

@@ -3,14 +3,15 @@
   describe("GridView.Widget", function() {
 
     it("should have defaults values when none were passed to the constructor", function() {
-      var widget = new GridView.Widget(),
-          attr = widget.getGridstackAttributes();
+      var widget = new GridView.Widget();
 
-      expect(attr.id).toEqual(0);
-      expect(attr.x).toEqual(0);
-      expect(attr.y).toEqual(0);
-      expect(attr.width).toEqual(1);
-      expect(attr.height).toEqual(1);
+      expect(widget.get('widgetId')).toEqual(0);
+      expect(widget.get('x')).toEqual(0);
+      expect(widget.get('y')).toEqual(0);
+      expect(widget.get('width')).toEqual(1);
+      expect(widget.get('height')).toEqual(1);
+      expect(widget.get('viewType')).toEqual('WidgetView');
+      expect(widget.get('name')).toEqual('No Name');
     });
 
     it("should have specified values when those were passed to the constructor", function() {
@@ -24,14 +25,12 @@
           widgetId: 1
         },
         widget = new GridView.Widget(attr);
-        attr = widget.getGridstackAttributes();
 
-      expect(attr.id).toEqual(1);
-      expect(attr.x).toEqual(4);
-      expect(attr.y).toEqual(5);
-      expect(attr.width).toEqual(2);
-      expect(attr.height).toEqual(2);
-
+      expect(widget.get('widgetId')).toEqual(1);
+      expect(widget.get('x')).toEqual(4);
+      expect(widget.get('y')).toEqual(5);
+      expect(widget.get('width')).toEqual(2);
+      expect(widget.get('height')).toEqual(2);
       expect(widget.get('viewType')).toEqual('CustomWidgetView');
       expect(widget.get('name')).toEqual('some widget');
     });
