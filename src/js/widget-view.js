@@ -1,5 +1,7 @@
+var DEFAULT_WIDGET_TEMPLATE = '<div class="default-widget"><p>default view</p></div>';
+
 GridView.WidgetView = Marionette.ItemView.extend({
-  template: _.template('<div class="default-widget"><p>default view</p></div>'),
+  template: _.template(DEFAULT_WIDGET_TEMPLATE),
 
   modelEvents: {
     'change': 'render'

@@ -1,14 +1,18 @@
-var DEFAULT_WIDGET_VIEW = 'WidgetView',
-    DEFAULT_WIDGET_NAME = 'No Name';
+var DEFAULT_WIDGET_VIEW          = 'WidgetView',
+    DEFAULT_WIDGET_NAME          = 'No Name',
+    GRIDSTACK_DEFAULT_POSITION_X = 0,
+    GRIDSTACK_DEFAULT_POSITION_Y = 0,
+    GRIDSTACK_DEFAULT_WIDTH      = 1,
+    GRIDSTACK_DEFAULT_HEIGHT     = 1;
 
 GridView.Widget = Backbone.Model.extend({
   defaults: {
     viewType: DEFAULT_WIDGET_VIEW,
     name:     DEFAULT_WIDGET_NAME,
-    x:        0,
-    y:        0,
-    width:    1,
-    height:   1,
+    x:        GRIDSTACK_DEFAULT_POSITION_X,
+    y:        GRIDSTACK_DEFAULT_POSITION_Y,
+    width:    GRIDSTACK_DEFAULT_WIDTH,
+    height:   GRIDSTACK_DEFAULT_HEIGHT,
     widgetId: 0
   },
 

@@ -16,17 +16,21 @@
 }(this, function(root, _, Backbone, Marionette) {
     'use strict';
   var GridView = {};
-  var DEFAULT_WIDGET_VIEW = 'WidgetView',
-      DEFAULT_WIDGET_NAME = 'No Name';
+  var DEFAULT_WIDGET_VIEW          = 'WidgetView',
+      DEFAULT_WIDGET_NAME          = 'No Name',
+      GRIDSTACK_DEFAULT_POSITION_X = 0,
+      GRIDSTACK_DEFAULT_POSITION_Y = 0,
+      GRIDSTACK_DEFAULT_WIDTH      = 1,
+      GRIDSTACK_DEFAULT_HEIGHT     = 1;
   
   GridView.Widget = Backbone.Model.extend({
     defaults: {
       viewType: DEFAULT_WIDGET_VIEW,
       name:     DEFAULT_WIDGET_NAME,
-      x:        0,
-      y:        0,
-      width:    1,
-      height:   1,
+      x:        GRIDSTACK_DEFAULT_POSITION_X,
+      y:        GRIDSTACK_DEFAULT_POSITION_Y,
+      width:    GRIDSTACK_DEFAULT_WIDTH,
+      height:   GRIDSTACK_DEFAULT_HEIGHT,
       widgetId: 0
     },
   
@@ -55,8 +59,10 @@
     model: GridView.Widget
   });
   
+  var DEFAULT_WIDGET_TEMPLATE = '<div class="default-widget"><p>default view</p></div>';
+  
   GridView.WidgetView = Marionette.ItemView.extend({
-    template: _.template('<div class="default-widget"><p>default view</p></div>'),
+    template: _.template(DEFAULT_WIDGET_TEMPLATE),
   
     modelEvents: {
       'change': 'render'
@@ -69,8 +75,10 @@
     }
   });
   
+  var DEFAULT_WIDGET_GRID_TEMPLATE = '<div id="main-gridstack" class="grid-stack">  </div>';
+  
   GridView.WidgetGridView = Marionette.LayoutView.extend({
-    template: _.template('<div id="main-gridstack" class="grid-stack">  </div>'),
+    template: _.template(DEFAULT_WIDGET_GRID_TEMPLATE),
   
     collectionEvents: {
       'add':    'onCollectionAdd',
@@ -89,16 +97,16 @@
       if (!options.collection) {
         throw new Error('Missing collection inside initialization options');
       }
-      this.options = options;
+      this.settings = options;
       this.rendered = false;
     },
   
     setAutoPos: function(autoPos) {
-      this.options.autoPos = autoPos;
+      this.settings.autoPos = autoPos;
     },
   
     setGridstackOptions: function(options) {
-      this.options.gsOptions = options;
+      this.settings.gsOptions = options;
     },
   
     onCollectionAdd: function(widget) {
@@ -121,12 +129,12 @@
     },
   
     saveCollection: function() {
-      if (!_.isEmpty(this.options.autoSave)) {
-        var options = this.options.autoSave.options || {};
+      if (!_.isEmpty(this.settings.autoSave)) {
+        var options = this.settings.autoSave.options || {};
         if (_.isFunction(options)) {
           options = options();
         }
-        this.options.autoSave.callback(this.collection, options);
+        this.settings.autoSave.callback(this.collection, options);
       }
     },
   
@@ -137,7 +145,7 @@
     },
   
     initializeGridstack: function() {
-      this.$('.grid-stack').gridstack(this.options.gsOptions);
+      this.$('.grid-stack').gridstack(this.settings.gsOptions);
       this.gridstack = this.$('.grid-stack').data('gridstack');
       this.$('.grid-stack').on('change', _.bind(this.updateAllWidgetsAttributes, this));
     },
@@ -155,15 +163,16 @@
             widgetInfo.y,
             widgetInfo.width,
             widgetInfo.height,
-            this.options.autoPos)) {
+            this.settings.autoPos)) {
   
           this.gridstack.add_widget(widgetInfo.el,
             widgetInfo.x,
             widgetInfo.y,
             widgetInfo.width,
             widgetInfo.height,
-            this.options.autoPos);
-          if (this.options.autoPos) {
+            this.settings.autoPos);
+  
+          if (this.settings.autoPos) {
             this.updateWidgetAttributesById(widgetInfo.id);
           }
           this.addRegion(widgetInfo.id, '#' + widgetInfo.id);
@@ -172,10 +181,10 @@
         } else {
           this.collection.remove(widget, { silent: true });
           this.saveCollection();
-          alert('Not enough free space to place the widget id : ' + widgetInfo.id);
+          this.helpMessage('NOT_ENOUGH_SPACE');
         }
       } else {
-        alert('The grid view needs to be rendered before trying to add widgets to the view');
+        this.helpMessage('GRID_NOT_RENDERED_BEFORE_ADD');
       }
     },
   
@@ -189,7 +198,7 @@
         //temporary fix for issue : https://github.com/troolee/gridstack.js/issues/167
         this.updateAllWidgetsAttributes();
       } else {
-        alert('The grid view needs to be rendered before trying to remove widgets from the view');
+        this.helpMessage('GRID_NOT_RENDERED_BEFORE_REMOVE');
       }
     },
   
@@ -199,7 +208,7 @@
         this.initializeGridstack();
         this.populateWidgetViews();
       } else {
-        alert('The grid view needs to be rendered before trying to reset the view');
+        this.helpMessage('GRID_NOT_RENDERED_BEFORE_RESET');
       }
     },
   
@@ -210,14 +219,14 @@
     },
   
     getViewToShow: function(widget) {
-      if (!this.options.customViews) {
+      if (!this.settings.customViews) {
         if (!widget.isDefaultView()) {
           widget.set('viewType', widget.getDefaultView());
         }
         return new GridView.WidgetView({ model: widget });
       } else {
-        if (this.options.customViews[widget.get('viewType')]) {
-          return new this.options.customViews[widget.get('viewType')]({ model: widget });
+        if (this.settings.customViews[widget.get('viewType')]) {
+          return new this.settings.customViews[widget.get('viewType')]({ model: widget });
         } else {
           if (!widget.isDefaultView()) {
             widget.set('viewType', widget.getDefaultView());
@@ -231,6 +240,15 @@
       this.collection.remove(args.model);
     },
   
+    helpMessage: function(event) {
+      if (!_.isEmpty(this.settings.logHelper)) {
+        if (_.isFunction(this.settings.logHelper.callback) && !_.isUndefined(this.settings.logHelper.messages[event])) {
+          this.settings.logHelper.callback.apply(this.settings.logHelper.context,
+            [this.settings.logHelper.messages[event]]);
+        }
+      }
+    },
+  
     updateAllWidgetsAttributes: function() {
       this.collection.each(function(widget) {
         this.updateWidgetAttributesById(widget.get('widgetId'));
@@ -240,10 +258,10 @@
     updateWidgetAttributesById: function(id) {
       var $item = this.$('#' + id).closest('.grid-stack-item');
       this.collection.findWhere({ widgetId: id }).set({
-        x:      parseInt($item.attr('data-gs-x')),
-        y:      parseInt($item.attr('data-gs-y')),
-        width:  parseInt($item.attr('data-gs-width')),
-        height: parseInt($item.attr('data-gs-height'))
+        x:      parseInt($item.attr('data-gs-x'), 10),
+        y:      parseInt($item.attr('data-gs-y'), 10),
+        width:  parseInt($item.attr('data-gs-width'), 10),
+        height: parseInt($item.attr('data-gs-height'), 10)
       });
     }
   

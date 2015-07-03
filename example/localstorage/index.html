@@ -57,8 +57,9 @@
     }),
     CustomWidgetList = Marionette.GridView.WidgetList.extend({
       localStorage: new Backbone.LocalStorage("widgetlist-storage")
-    }),
-    saveCollectionOnLocalStorage = function(collection, options) {
+    });
+
+  var saveCollectionOnLocalStorage = function(collection, options) {
       var storage = window.localStorage.getItem('widgetlist-storage');
       if (!_.isEmpty(storage)) {
         var keys = storage.split(',');
@@ -70,8 +71,18 @@
         model.save(null, { silent: true });
       });
     },
-    getGridstackOptions = function() {
-      return { vertical_margin: 20, animate: $('#gsoption-animate').is(':checked'), float: $('#gsoption-float').is(':checked'), height: 10, width: 10 }
+    gridstackOptions =  {
+      vertical_margin: 20,
+      animate: $('#gsoption-animate').is(':checked'),
+      float: $('#gsoption-float').is(':checked'),
+      height: 10,
+      width: 10
+    },
+    helperMessages = {
+      NOT_ENOUGH_SPACE: 'Not enough free space to add that last widget',
+      GRID_NOT_RENDERED_BEFORE_ADD: 'The grid view needs to be rendered before trying to add widgets to the view',
+      GRID_NOT_RENDERED_BEFORE_REMOVE: 'The grid view needs to be rendered before trying to remove widgets from the view',
+      GRID_NOT_RENDERED_BEFORE_RESET: 'The grid view needs to be rendered before trying to reset the view'
     };
 
   var newId = 0,
@@ -82,8 +93,14 @@
       collection:  widgets,
       customViews: views,
       autoPos:     false,
+      logHelper: {
+        callback: console.log,
+        context: console,
+        messages: helperMessages,
+        options: {}
+      },
       autoSave: { callback:  saveCollectionOnLocalStorage },
-      gsOptions:   getGridstackOptions()
+      gsOptions:   gridstackOptions
     });
 
   $('#main-container').html(gridview.$el);
