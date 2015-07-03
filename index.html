@@ -70,7 +70,7 @@
         model.save(null, { silent: true });
       });
     },
-    getGgridstackOptions =  function(){
+    getGridstackOptions =  function(){
       return {
         vertical_margin: 20,
         animate: $('#gsoption-animate').is(':checked'),
@@ -94,7 +94,7 @@
         options: {}
       },
       autoSave: { callback:  saveCollectionOnLocalStorage },
-      gsOptions:   getGgridstackOptions()
+      gsOptions:   getGridstackOptions()
     });
 
   $('#main-container').html(gridview.$el);
@@ -130,7 +130,7 @@
   });
 
   $("#btn-render").click(function() {
-    gridview.setGridstackOptions(getGgridstackOptions());
+    gridview.setGridstackOptions(getGridstackOptions());
     gridview.setAutoPos(false);
     gridview.render();
     gridview.setAutoPos(true);
