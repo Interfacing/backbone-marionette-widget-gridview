@@ -164,12 +164,11 @@ GridView.WidgetGridView = Marionette.LayoutView.extend({
   },
 
   helpMessage: function(event) {
-    if (!_.isEmpty(this.settings.logHelper)) {
-      if (_.isFunction(this.settings.logHelper.callback) && !_.isUndefined(this.settings.logHelper.messages[event])) {
-        this.settings.logHelper.callback.apply(this.settings.logHelper.context,
-          [this.settings.logHelper.messages[event]]);
-      }
-    }
+    var callback = this.settings.logHelper.callback || window.alert,
+        messages = this.settings.logHelper.messages || this.getDefaultMessages(),
+        context = this.settings.logHelper.context;
+
+    callback.call(context, messages[event]);
   },
 
   updateAllWidgetsAttributes: function() {
@@ -186,6 +185,14 @@ GridView.WidgetGridView = Marionette.LayoutView.extend({
       width:  parseInt($item.attr('data-gs-width'), 10),
       height: parseInt($item.attr('data-gs-height'), 10)
     });
-  }
+  },
 
+  getDefaultMessages: function() {
+    return {
+      NOT_ENOUGH_SPACE: 'Not enough free space to add that last widget',
+      GRID_NOT_RENDERED_BEFORE_ADD: 'The grid view needs to be rendered before trying to add widgets to the view',
+      GRID_NOT_RENDERED_BEFORE_REMOVE: 'The grid view needs to be rendered before trying to remove widgets from the view',
+      GRID_NOT_RENDERED_BEFORE_RESET: 'The grid view needs to be rendered before trying to reset the view'
+    };
+  }
 });
