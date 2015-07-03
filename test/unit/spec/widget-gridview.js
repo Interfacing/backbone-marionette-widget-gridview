@@ -89,9 +89,7 @@
     });
 
     it("should listen for a change on .gridstack elements", function() {
-      var ClonedWidgetGridView = GridView.WidgetGridView.extend();//Marionette.LayoutView.extend();
-      /*_.extend(ClonedWidgetGridView.prototype, GridView.WidgetGridView.prototype);
-      console.log(ClonedWidgetGridView);*/
+      var ClonedWidgetGridView = GridView.WidgetGridView.extend();
       spyOn(ClonedWidgetGridView.prototype, 'updateAllWidgetsAttributes');
       var otherGrid = new ClonedWidgetGridView({ collection: new GridView.WidgetList(widgets) });
       otherGrid.render();
@@ -163,6 +161,21 @@
       expect(tempGridView.getViewToShow(customWidget) instanceof GridView.WidgetView).toBeTruthy();
       expect(tempGridView.getViewToShow(otherWidget) instanceof GridView.WidgetView).toBeTruthy();
       expect(tempGridView.getViewToShow(otherWidget) instanceof CustomWidgetView).toBeFalsy();
+    });
+
+    it("should update the models positions and size attributes when a widget is moved or resized inside the grid view", function() {
+      expect(widget.get('x')).toEqual(0);
+      expect(widget.get('y')).toEqual(0);
+      expect(widget.get('width')).toEqual(1);
+      expect(widget.get('height')).toEqual(1);
+
+      gridview.gridstack.update(gridview.$('.grid-stack-item[data-gs-x=' + widget.get('x') + '][data-gs-y=' + widget.get('y') + ']'), 2, 0, 3, 4);
+      gridview.$('.grid-stack').trigger('change');
+
+      expect(widget.get('x')).toEqual(2);
+      expect(widget.get('y')).toEqual(0);
+      expect(widget.get('width')).toEqual(3);
+      expect(widget.get('height')).toEqual(4);
     });
 
   });

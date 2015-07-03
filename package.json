@@ -33,9 +33,6 @@
     "karma-chrome-launcher": "0.1.7",
     "karma-firefox-launcher": "0.1.4",
     "karma-ie-launcher": "0.1.5",
-
-    "karma-sauce-launcher": "^0.2.10",
-    "karma-webdriver-launcher": "1.0.1",
     "underscore": "1.8.3"
   },
   "devDependencies": {

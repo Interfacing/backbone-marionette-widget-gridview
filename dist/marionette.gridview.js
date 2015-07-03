@@ -90,6 +90,7 @@
         throw new Error('Missing collection inside initialization options');
       }
       this.options = options;
+      this.rendered = false;
     },
   
     setAutoPos: function(autoPos) {
@@ -130,6 +131,7 @@
     },
   
     onRender: function() {
+      this.rendered = true;
       this.initializeGridstack();
       this.populateWidgetViews();
     },
@@ -147,46 +149,58 @@
     },
   
     addWidgetView: function(widget) {
-      var widgetInfo = widget.getGridstackAttributes();
-      if (this.gridstack.will_it_fit(widgetInfo.x,
-          widgetInfo.y,
-          widgetInfo.width,
-          widgetInfo.height,
-          this.options.autoPos)) {
+      if (this.rendered) {
+        var widgetInfo = widget.getGridstackAttributes();
+        if (this.gridstack.will_it_fit(widgetInfo.x,
+            widgetInfo.y,
+            widgetInfo.width,
+            widgetInfo.height,
+            this.options.autoPos)) {
   
-        this.gridstack.add_widget(widgetInfo.el,
-          widgetInfo.x,
-          widgetInfo.y,
-          widgetInfo.width,
-          widgetInfo.height,
-          this.options.autoPos);
-        if (this.options.autoPos) {
-          this.updateWidgetAttributesById(widgetInfo.id);
+          this.gridstack.add_widget(widgetInfo.el,
+            widgetInfo.x,
+            widgetInfo.y,
+            widgetInfo.width,
+            widgetInfo.height,
+            this.options.autoPos);
+          if (this.options.autoPos) {
+            this.updateWidgetAttributesById(widgetInfo.id);
+          }
+          this.addRegion(widgetInfo.id, '#' + widgetInfo.id);
+          this.showWidgetView(widget);
+  
+        } else {
+          this.collection.remove(widget, { silent: true });
+          this.saveCollection();
+          alert('Not enough free space to place the widget id : ' + widgetInfo.id);
         }
-        this.addRegion(widgetInfo.id, '#' + widgetInfo.id);
-        this.showWidgetView(widget);
-  
       } else {
-        this.collection.remove(widget, { silent: true });
-        this.saveCollection();
-        alert('Not enough free space to place the widget id : ' + widgetInfo.id);
+        alert('The grid view needs to be rendered before trying to add widgets to the view');
       }
     },
   
     removeWidgetView: function(widget) {
-      var widgetId = widget.get('widgetId'),
-          $el       = this.$('#' + widgetId).closest('.grid-stack-item');
+      if (this.rendered) {
+        var widgetId = widget.get('widgetId'),
+            $el      = this.$('#' + widgetId).closest('.grid-stack-item');
   
-      this.removeRegion(widgetId);
-      this.gridstack.remove_widget($el);
-      //temporary fix for issue : https://github.com/troolee/gridstack.js/issues/167
-      this.updateAllWidgetsAttributes();
+        this.removeRegion(widgetId);
+        this.gridstack.remove_widget($el);
+        //temporary fix for issue : https://github.com/troolee/gridstack.js/issues/167
+        this.updateAllWidgetsAttributes();
+      } else {
+        alert('The grid view needs to be rendered before trying to remove widgets from the view');
+      }
     },
   
     resetGridView: function() {
-      this.gridstack.remove_all();
-      this.initializeGridstack();
-      this.populateWidgetViews();
+      if (this.rendered) {
+        this.gridstack.remove_all();
+        this.initializeGridstack();
+        this.populateWidgetViews();
+      } else {
+        alert('The grid view needs to be rendered before trying to reset the view');
+      }
     },
   
     showWidgetView: function(widget) {
@@ -226,10 +240,10 @@
     updateWidgetAttributesById: function(id) {
       var $item = this.$('#' + id).closest('.grid-stack-item');
       this.collection.findWhere({ widgetId: id }).set({
-        x:      $item.attr('data-gs-x'),
-        y:      $item.attr('data-gs-y'),
-        width:  $item.attr('data-gs-width'),
-        height: $item.attr('data-gs-height')
+        x:      parseInt($item.attr('data-gs-x')),
+        y:      parseInt($item.attr('data-gs-y')),
+        width:  parseInt($item.attr('data-gs-width')),
+        height: parseInt($item.attr('data-gs-height'))
       });
     }
   
