@@ -72,13 +72,20 @@ module.exports = function(grunt) {
           captureConsole: true,
           files: [
             "node_modules/jquery/dist/jquery.min.js",
+            "src/lib/jquery-ui/jquery-ui.min.js",
             "node_modules/underscore/underscore-min.js",
-            "node_modules/backbone/backbone-min.js",
+            "node_modules/backbone/backbone.js",
             "node_modules/backbone.marionette/lib/backbone.marionette.min.js",
-            "dist/marionette-widget-gridview.min.js",
-            'test/unit/libs/jasmine-jquery.js',
-            'dist/marionette-widget-gridview.js',
-            'test/unit/spec/**/*.js']
+            "src/lib/gridstack/gridstack.min.css",
+            "src/lib/gridstack/gridstack.min.js",
+            "src/js/core.js",
+            "src/js/widget.js",
+            "src/js/widget-view.js",
+            "src/js/widget-gridview.js",
+            "example/custom.css",
+            "test/unit/libs/jasmine-jquery.js",
+            "test/unit/spec/**/*.js"
+            ]
         }
       }
     },
@@ -124,5 +131,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.registerTask('default',  ['clean', 'less', 'preprocess', 'uglify', 'cssmin', 'watch']);
-  grunt.registerTask('test',  [ 'karma']);
+  grunt.registerTask('test',  ['karma']);
 };

@@ -4,6 +4,11 @@
         define(['underscore', 'backbone', 'backbone.marionette'], function(_, Backbone, Marionette) {
             return factory(root, _, Backbone, Marionette);
         });
+    } else if (typeof exports !== 'undefined') {
+      var Backbone = require('backbone');
+      var _ = require('underscore');
+      var Marionette = require('backbone.marionette');
+      module.exports = factory(root, _, Backbone, Marionette);
     } else {
         root.Marionette.GridView = factory(root, root._, root.Backbone, root.Marionette);
     }
@@ -11,17 +16,21 @@
 }(this, function(root, _, Backbone, Marionette) {
     'use strict';
   var GridView = {};
-  var DEFAULT_WIDGET_VIEW = 'WidgetView',
-      DEFAULT_WIDGET_NAME = 'No Name';
+  var DEFAULT_WIDGET_VIEW          = 'WidgetView',
+      DEFAULT_WIDGET_NAME          = 'No Name',
+      GRIDSTACK_DEFAULT_POSITION_X = 0,
+      GRIDSTACK_DEFAULT_POSITION_Y = 0,
+      GRIDSTACK_DEFAULT_WIDTH      = 1,
+      GRIDSTACK_DEFAULT_HEIGHT     = 1;
   
   GridView.Widget = Backbone.Model.extend({
     defaults: {
       viewType: DEFAULT_WIDGET_VIEW,
       name:     DEFAULT_WIDGET_NAME,
-      x:        0,
-      y:        0,
-      width:    0,
-      height:   0,
+      x:        GRIDSTACK_DEFAULT_POSITION_X,
+      y:        GRIDSTACK_DEFAULT_POSITION_Y,
+      width:    GRIDSTACK_DEFAULT_WIDTH,
+      height:   GRIDSTACK_DEFAULT_HEIGHT,
       widgetId: 0
     },
   
@@ -50,8 +59,10 @@
     model: GridView.Widget
   });
   
+  var DEFAULT_WIDGET_TEMPLATE = '<div class="default-widget"><p>default view</p></div>';
+  
   GridView.WidgetView = Marionette.ItemView.extend({
-    template: _.template('<div class="some-widget"><p>default view</p></div>'),
+    template: _.template(DEFAULT_WIDGET_TEMPLATE),
   
     modelEvents: {
       'change': 'render'
@@ -64,8 +75,10 @@
     }
   });
   
+  var DEFAULT_WIDGET_GRID_TEMPLATE = '<div id="main-gridstack" class="grid-stack">  </div>';
+  
   GridView.WidgetGridView = Marionette.LayoutView.extend({
-    template: '#gridview-template',
+    template: _.template(DEFAULT_WIDGET_GRID_TEMPLATE),
   
     collectionEvents: {
       'add':    'onCollectionAdd',
@@ -77,23 +90,24 @@
     initialize: function(options) {
       options = options || {};
       options.gsOptions = options.gsOptions || {};
-      this.autoSave = options.autoSave;
+      options.logHelper = options.logHelper || {};
   
-      if (!_.isUndefined(options.autoPos)) {
+      if (_.isUndefined(options.autoPos)) {
         options.autoPos = true;
       }
       if (!options.collection) {
         throw new Error('Missing collection inside initialization options');
       }
-      this.options = options;
+      this.settings = options;
+      this.rendered = false;
     },
   
     setAutoPos: function(autoPos) {
-      this.options.autoPos = autoPos;
+      this.settings.autoPos = autoPos;
     },
   
     setGridstackOptions: function(options) {
-      this.options.gsOptions = options;
+      this.settings.gsOptions = options;
     },
   
     onCollectionAdd: function(widget) {
@@ -116,74 +130,87 @@
     },
   
     saveCollection: function() {
-      if (!_.isEmpty(this.autoSave)) {
-        var options = this.autoSave.options || {};
+      if (!_.isEmpty(this.settings.autoSave)) {
+        var options = this.settings.autoSave.options || {};
         if (_.isFunction(options)) {
           options = options();
         }
-        this.autoSave.callback(this.collection, options);
+        this.settings.autoSave.callback(this.collection, options);
       }
     },
   
     onRender: function() {
+      this.rendered = true;
       this.initializeGridstack();
       this.populateWidgetViews();
     },
   
     initializeGridstack: function() {
-      this.$('.grid-stack').gridstack(this.options.gsOptions);
+      this.$('.grid-stack').gridstack(this.settings.gsOptions);
       this.gridstack = this.$('.grid-stack').data('gridstack');
       this.$('.grid-stack').on('change', _.bind(this.updateAllWidgetsAttributes, this));
     },
   
     populateWidgetViews: function() {
-      var self = this;
       this.collection.each(function(widget) {
-        self.addWidgetView(widget);
-      });
+        this.addWidgetView(widget);
+      }, this);
     },
   
     addWidgetView: function(widget) {
-      var widgetInfo = widget.getGridstackAttributes();
-      if (this.gridstack.will_it_fit(widgetInfo.x,
-          widgetInfo.y,
-          widgetInfo.width,
-          widgetInfo.height,
-          this.options.autoPos)) {
+      if (this.rendered) {
+        var widgetInfo = widget.getGridstackAttributes();
+        if (this.gridstack.will_it_fit(widgetInfo.x,
+            widgetInfo.y,
+            widgetInfo.width,
+            widgetInfo.height,
+            this.settings.autoPos)) {
   
-        this.gridstack.add_widget(widgetInfo.el,
-          widgetInfo.x,
-          widgetInfo.y,
-          widgetInfo.width,
-          widgetInfo.height,
-          this.options.autoPos);
-        if (this.options.autoPos) {
-          this.updateWidgetAttributesById(widgetInfo.id);
+          this.gridstack.add_widget(widgetInfo.el,
+            widgetInfo.x,
+            widgetInfo.y,
+            widgetInfo.width,
+            widgetInfo.height,
+            this.settings.autoPos);
+  
+          if (this.settings.autoPos) {
+            this.updateWidgetAttributesById(widgetInfo.id);
+          }
+          this.addRegion(widgetInfo.id, '#' + widgetInfo.id);
+          this.showWidgetView(widget);
+  
+        } else {
+          this.collection.remove(widget, { silent: true });
+          this.saveCollection();
+          this.helpMessage('NOT_ENOUGH_SPACE');
         }
-        this.addRegion(widgetInfo.id, '#' + widgetInfo.id);
-        this.showWidgetView(widget);
-  
       } else {
-        this.collection.remove(widget, { silent: true });
-        this.saveCollection();
-        alert('Not enough free space to place the widget id : ' + widgetInfo.id);
+        this.helpMessage('GRID_NOT_RENDERED_BEFORE_ADD');
       }
     },
   
     removeWidgetView: function(widget) {
-      var widgetId = widget.get('widgetId'),
-          $el       = this.$('#' + widgetId).closest('.grid-stack-item');
+      if (this.rendered) {
+        var widgetId = widget.get('widgetId'),
+            $el      = this.$('#' + widgetId).closest('.grid-stack-item');
   
-      this.removeRegion(widgetId);
-      this.gridstack.remove_widget($el);
-      //temporary fix for issue : https://github.com/troolee/gridstack.js/issues/167
-      this.updateAllWidgetsAttributes();
+        this.removeRegion(widgetId);
+        this.gridstack.remove_widget($el);
+        //temporary fix for issue : https://github.com/troolee/gridstack.js/issues/167
+        this.updateAllWidgetsAttributes();
+      } else {
+        this.helpMessage('GRID_NOT_RENDERED_BEFORE_REMOVE');
+      }
     },
   
     resetGridView: function() {
-      this.gridstack.remove_all();
-      this.initializeGridstack();
-      this.populateWidgetViews();
+      if (this.rendered) {
+        this.gridstack.remove_all();
+        this.initializeGridstack();
+        this.populateWidgetViews();
+      } else {
+        this.helpMessage('GRID_NOT_RENDERED_BEFORE_RESET');
+      }
     },
   
     showWidgetView: function(widget) {
@@ -193,25 +220,33 @@
     },
   
     getViewToShow: function(widget) {
-      if (!this.options.customViews) {
+      if (!this.settings.customViews) {
         if (!widget.isDefaultView()) {
           widget.set('viewType', widget.getDefaultView());
         }
-        return new Marionette.GridView.WidgetView({ model: widget });
+        return new GridView.WidgetView({ model: widget });
       } else {
-        if (this.options.customViews[widget.get('viewType')]) {
-          return new this.options.customViews[widget.get('viewType')]({ model: widget });
+        if (this.settings.customViews[widget.get('viewType')]) {
+          return new this.settings.customViews[widget.get('viewType')]({ model: widget });
         } else {
           if (!widget.isDefaultView()) {
             widget.set('viewType', widget.getDefaultView());
           }
-          return new Marionette.GridView.WidgetView({ model: widget });
+          return new GridView.WidgetView({ model: widget });
         }
       }
     },
   
     removeWidget: function(args) {
       this.collection.remove(args.model);
+    },
+  
+    helpMessage: function(event) {
+      var callback = this.settings.logHelper.callback || window.alert,
+          messages = this.settings.logHelper.messages || this.getDefaultMessages(),
+          context = this.settings.logHelper.context;
+  
+      callback.call(context, messages[event]);
     },
   
     updateAllWidgetsAttributes: function() {
@@ -223,13 +258,21 @@
     updateWidgetAttributesById: function(id) {
       var $item = this.$('#' + id).closest('.grid-stack-item');
       this.collection.findWhere({ widgetId: id }).set({
-        x:      $item.attr('data-gs-x'),
-        y:      $item.attr('data-gs-y'),
-        width:  $item.attr('data-gs-width'),
-        height: $item.attr('data-gs-height')
+        x:      parseInt($item.attr('data-gs-x'), 10),
+        y:      parseInt($item.attr('data-gs-y'), 10),
+        width:  parseInt($item.attr('data-gs-width'), 10),
+        height: parseInt($item.attr('data-gs-height'), 10)
       });
-    }
+    },
   
+    getDefaultMessages: function() {
+      return {
+        NOT_ENOUGH_SPACE: 'Not enough free space to add that last widget',
+        GRID_NOT_RENDERED_BEFORE_ADD: 'The grid view needs to be rendered before trying to add widgets to the view',
+        GRID_NOT_RENDERED_BEFORE_REMOVE: 'The grid view needs to be rendered before trying to remove widgets from the view',
+        GRID_NOT_RENDERED_BEFORE_RESET: 'The grid view needs to be rendered before trying to reset the view'
+      };
+    }
   });
   
   return GridView;

@@ -4,40 +4,26 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta name="viewport" content="width=device-width initial-scale=1"/>
   <link rel='stylesheet' href='../../dist/marionette-widget-gridview.min.css'/>
-  <link href="../../src/lib/gridstack/gridstack.min.css" rel="stylesheet">
-  <style>
-    #main-gridstack {
-      background-color: #00A000;
-    }
-
-    .grid-stack-item-content {
-      background-color: #00b3ee;
-      cursor: move;
-    }
-  </style>
+  <link rel="stylesheet" href="../../src/lib/gridstack/gridstack.min.css" >
+  <link rel="stylesheet" href="../custom.css" >
   <title>Basic example</title>
 </head>
 <body>
 <div id="main-container"></div>
 
 <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
-<script src="../../node_modules/jquery-ui/jquery-ui.min.js"></script>
+<script src="../../src/lib/jquery-ui/jquery-ui.min.js"></script>
 <script src="../../node_modules/underscore/underscore-min.js"></script>
 <script src="../../node_modules/backbone/backbone-min.js"></script>
 <script src="../../node_modules/backbone.marionette/lib/backbone.marionette.min.js"></script>
 <script src="../../src/lib/gridstack/gridstack.min.js"></script>
 <script src="../../dist/marionette.gridview.js"></script>
 
-<script type="text/template" id="gridview-template">
-  <div id="main-gridstack" class="grid-stack">
-  </div>
-</script>
 <script>
   var CustomWidgetList = Marionette.GridView.WidgetList.extend({
       model: Marionette.GridView.Widget
     }),
     widg1 = new Marionette.GridView.Widget({
-      type:     'default',
       viewType: 'WidgetView',
       name:     'some widget',
       width:    2,
@@ -47,7 +33,6 @@
       widgetId: 1
     }),
     widg2 = new Marionette.GridView.Widget({
-      type:     'default',
       viewType: 'WidgetView',
       name:     'other widget',
       width:    4,
@@ -57,7 +42,6 @@
       widgetId: 2
     }),
     widg3 = new Marionette.GridView.Widget({
-      type:     'default',
       viewType: 'WidgetView',
       name:     'and another widget',
       width:    6,
