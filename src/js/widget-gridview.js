@@ -13,6 +13,7 @@ GridView.WidgetGridView = Marionette.LayoutView.extend({
   initialize: function(options) {
     options = options || {};
     options.gsOptions = options.gsOptions || {};
+    options.logHelper = options.logHelper || {};
 
     if (_.isUndefined(options.autoPos)) {
       options.autoPos = true;
