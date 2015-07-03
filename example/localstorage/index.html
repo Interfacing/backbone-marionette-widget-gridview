@@ -71,12 +71,14 @@
         model.save(null, { silent: true });
       });
     },
-    gridstackOptions =  {
-      vertical_margin: 20,
-      animate: $('#gsoption-animate').is(':checked'),
-      float: $('#gsoption-float').is(':checked'),
-      height: 10,
-      width: 10
+    getGridstackOptions = function() {
+      return {
+        vertical_margin: 20,
+        animate: $('#gsoption-animate').is(':checked'),
+        float: $('#gsoption-float').is(':checked'),
+        height: 10,
+        width: 10
+      };
     };
 
   var newId = 0,
@@ -93,7 +95,7 @@
         options: {}
       },
       autoSave: { callback:  saveCollectionOnLocalStorage },
-      gsOptions:   gridstackOptions
+      gsOptions:   getGridstackOptions()
     });
 
   $('#main-container').html(gridview.$el);
