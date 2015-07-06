@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/backbone-marionette-widget-gridview.iml" filepath="$PROJECT_DIR$/backbone-marionette-widget-gridview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/backbone-marionette-widget-gridview.iml" filepath="$PROJECT_DIR$/.idea/backbone-marionette-widget-gridview.iml" />
     </modules>
   </component>
 </project>

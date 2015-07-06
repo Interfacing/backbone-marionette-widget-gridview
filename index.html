@@ -23,10 +23,10 @@
 <input type="checkbox" id="gsoption-animate"> Animate
 <div id="main-container"></div>
 
-
+<script src="lib/js/underscore-min.js"></script>
 <script src="lib/js/jquery.min.js"></script>
 <script src="lib/js/jquery-ui.min.js"></script>
-<script src="lib/js/underscore-min.js"></script>
+<script src="lib/js/jquery.ui.touch-punch.min.js"></script>
 <script src="lib/js/backbone-min.js"></script>
 <script src="lib/js/backbone.marionette.min.js"></script>
 <script src="lib/js/gridstack.min.js"></script>
@@ -76,7 +76,8 @@
         animate: $('#gsoption-animate').is(':checked'),
         float: $('#gsoption-float').is(':checked'),
         height: 10,
-        width: 10
+        width: 10,
+        always_show_resize_handle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
       };
     };
 
