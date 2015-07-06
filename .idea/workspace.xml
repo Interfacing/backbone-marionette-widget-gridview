@@ -2,18 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b10544ca-23b4-4e7b-8431-a304722b188a" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/js/jquery.ui.touch-punch.min.js" />
-      <change type="DELETED" beforePath="C:\Users\jffaust\Documents\INTERFACING\backbone-marionette-widget-gridview\.idea\codeStyleSettings.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\jffaust\Documents\INTERFACING\backbone-marionette-widget-gridview\.idea\jsLibraryMappings.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\jffaust\Documents\INTERFACING\backbone-marionette-widget-gridview\.idea\libraries\backbone_marionette_widget_gridview_node_modules.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\jffaust\Documents\INTERFACING\backbone-marionette-widget-gridview\.idea\uiDesigner.xml" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\jffaust\Documents\INTERFACING\backbone-marionette-widget-gridview\.idea\.name" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\jffaust\Documents\INTERFACING\backbone-marionette-widget-gridview\.idea\compiler.xml" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\jffaust\Documents\INTERFACING\backbone-marionette-widget-gridview\.idea\copyright\profiles_settings.xml" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\jffaust\Documents\INTERFACING\backbone-marionette-widget-gridview\.idea\misc.xml" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\jffaust\Documents\INTERFACING\backbone-marionette-widget-gridview\.idea\modules.xml" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\jffaust\Documents\INTERFACING\backbone-marionette-widget-gridview\.idea\vcs.xml" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\jffaust\Documents\INTERFACING\backbone-marionette-widget-gridview\.idea\workspace.xml" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="backbone-marionette-widget-gridview.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -48,8 +44,8 @@
       <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.478125">
-              <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.38958332">
+              <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -431,12 +427,12 @@
       <created>1436189275082</created>
       <option name="number" value="Default" />
       <updated>1436189275082</updated>
-      <workItem from="1436189277053" duration="245000" />
+      <workItem from="1436189277053" duration="734000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="245000" />
+    <option name="totallyTimeSpent" value="734000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1928" y="-8" width="1936" height="1096" extended-state="6" />
@@ -493,8 +489,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.478125">
-          <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.38958332">
+          <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
           <folding />
         </state>
       </provider>
