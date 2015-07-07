@@ -137,7 +137,7 @@
       expect(gridview.collection.length).toEqual(2);
       expect($('div .grid-stack-item-content').length).toEqual(2);
 
-      gridview.getRegion(widget.get('widgetId')).currentView.trigger('remove:widget', { model:widget });
+      gridview.getRegion(widget.getRegionName()).currentView.trigger('remove:widget', { model:widget });
 
       expect(gridview.collection.length).toEqual(1);
       expect($('div .grid-stack-item-content').length).toEqual(1);

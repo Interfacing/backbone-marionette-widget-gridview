@@ -11,5 +11,6 @@ GridView.WidgetView = Marionette.ItemView.extend({
     this.$el = this.$el.children();
     this.$el.unwrap();
     this.setElement(this.$el);
+    this.trigger('after:render');
   }
 });

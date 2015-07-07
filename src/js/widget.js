@@ -23,7 +23,7 @@ GridView.Widget = Backbone.Model.extend({
       y:      this.get('y'),
       width:  this.get('width'),
       height: this.get('height'),
-      el:     '<div class="grid-stack-item"><div id="' + this.get('widgetId') + '" class="grid-stack-item-content"></div></div>'
+      el:     '<div class="grid-stack-item"><div id="' + this.getRegionName() + '" class="grid-stack-item-content"></div></div>'
     };
   },
 
@@ -33,6 +33,10 @@ GridView.Widget = Backbone.Model.extend({
 
   getDefaultView: function() {
     return DEFAULT_WIDGET_VIEW;
+  },
+
+  getRegionName: function() {
+    return this.get('viewType') + this.get('widgetId');
   }
 
 });

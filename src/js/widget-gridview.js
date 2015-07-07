@@ -97,9 +97,9 @@ GridView.WidgetGridView = Marionette.LayoutView.extend({
           this.settings.autoPos);
 
         if (this.settings.autoPos) {
-          this.updateWidgetAttributesById(widgetInfo.id);
+          this.updateWidgetAttributes(widget.getRegionName(), widgetInfo.id);
         }
-        this.addRegion(widgetInfo.id, '#' + widgetInfo.id);
+        this.addRegion(widget.getRegionName(), '#' + widget.getRegionName());
         this.showWidgetView(widget);
 
       } else {
@@ -114,10 +114,10 @@ GridView.WidgetGridView = Marionette.LayoutView.extend({
 
   removeWidgetView: function(widget) {
     if (this.rendered) {
-      var widgetId = widget.get('widgetId'),
-          $el      = this.$('#' + widgetId).closest('.grid-stack-item');
+      var region = widget.getRegionName(),
+          $el      = this.$('#' + region).closest('.grid-stack-item');
 
-      this.removeRegion(widgetId);
+      this.removeRegion(region);
       this.gridstack.remove_widget($el);
       //temporary fix for issue : https://github.com/troolee/gridstack.js/issues/167
       this.updateAllWidgetsAttributes();
@@ -139,7 +139,7 @@ GridView.WidgetGridView = Marionette.LayoutView.extend({
   showWidgetView: function(widget) {
     var view = this.getViewToShow(widget);
     this.listenTo(view, 'remove:widget', this.removeWidget);
-    this.getRegion(widget.get('widgetId')).show(view);
+    this.getRegion(widget.getRegionName()).show(view);
   },
 
   getViewToShow: function(widget) {
@@ -174,12 +174,12 @@ GridView.WidgetGridView = Marionette.LayoutView.extend({
 
   updateAllWidgetsAttributes: function() {
     this.collection.each(function(widget) {
-      this.updateWidgetAttributesById(widget.get('widgetId'));
+      this.updateWidgetAttributes(widget.getRegionName(), widget.get('widgetId'));
     }, this);
   },
 
-  updateWidgetAttributesById: function(id) {
-    var $item = this.$('#' + id).closest('.grid-stack-item');
+  updateWidgetAttributes: function(region, id) {
+    var $item = this.$('#' + region).closest('.grid-stack-item');
     this.collection.findWhere({ widgetId: id }).set({
       x:      parseInt($item.attr('data-gs-x'), 10),
       y:      parseInt($item.attr('data-gs-y'), 10),
