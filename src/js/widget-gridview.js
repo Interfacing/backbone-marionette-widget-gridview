@@ -169,7 +169,11 @@ GridView.WidgetGridView = Marionette.LayoutView.extend({
         messages = this.settings.logHelper.messages || this.getDefaultMessages(),
         context = this.settings.logHelper.context;
 
-    callback.call(context, messages[event]);
+    if (messages[event]) {
+      callback.call(context, messages[event]);
+    } else {
+      callback.call(context, 'Key : ' + event + ' was not defined inside the message object');
+    }
   },
 
   updateAllWidgetsAttributes: function() {
