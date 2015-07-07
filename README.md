@@ -56,7 +56,7 @@ Options for WidgetGridView :
 
 Options for gridstack.js : Look at the [gridstack docs](https://github.com/troolee/gridstack.js#options) for the available options
 
-** It is possible to change the behavior of the grid view and (gridstack) by changing its options (using `Marionette.WidgetGridView`'s `setAutoPos()` and `setGridstackOptions()`). The only thing left to do is to call `render()` again on the `Marionette.WidgetGridView` so the new options are used.**
+**It is possible to change the behavior of the grid view (and gridstack) by changing its options (using `Marionette.WidgetGridView`'s `setAutoPos()` and `setGridstackOptions()`). The only thing left to do is to call `render()` again on the `Marionette.WidgetGridView` so the new options are used.**
 
 ## `Backbone.WidgetList` Collection Events
 
@@ -69,14 +69,14 @@ Options for gridstack.js : Look at the [gridstack docs](https://github.com/trool
 
 
 ## Customize
-The principle customization is to extend the `Marionette.WidgetView` to make your own custom widget views !
+The main customization is to extend the `Marionette.WidgetView` to make your own custom widget views !
 You can see an example of doing so by taking a look at the localstorage example that comes with this library at [example/localstorage/index.html](https://github.com/Interfacing/backbone-marionette-widget-gridview/blob/master/example/localstorage/index.html)
 
 
 ## Rendering
  When a `Marionette.WidgetGridView` is `render()`ed, it will initialize gridstack with the current `gsOptions` and then proceed to add a custom view to the grid view for every model inside the current collection.
 
-**When a `Marionette.WidgetView` is rendered, it will only render the root element. That means that when you define the template of your custom views, you should always regroup your view's html into a single element at the top level. . In the [localstorage example](https://github.com/Interfacing/backbone-marionette-widget-gridview/blob/marionette-logic/example/localstorage/index.html), the content of the views are contained into a single `<div></div>` html tag**
+**When a `Marionette.WidgetView` is rendered, it will only render the root element. That means that when you define the template of your custom views, you should always regroup your view's html into a single element at the top level. . In the [localstorage example](https://github.com/Interfacing/backbone-marionette-widget-gridview/blob/marionette-logic/example/localstorage/index.html), the content of the views are contained into a single `<div></div>` html tag.**
 
 
 ## Changelog
