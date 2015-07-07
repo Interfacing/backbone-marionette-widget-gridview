@@ -53,6 +53,7 @@ Options for WidgetGridView :
 - `customViews` : an array of definitions where keys represents the names of the custom views and values the references to the custom views that you extended from the base class `Marionette.WidgetView`.
 - `autoPos` : a boolean that is passed to [gridstack's add_widget](https://github.com/troolee/gridstack.js/blob/master/README.md#add_widgetel-x-y-width-height-auto_position) function. If `true`, gridstack will ignore the specified x and y grid values and will add the widget to the next available position. If `false`, gridstack will try to add the widget at the specified x and y grid values and add it to the next position available if the space is already occupied. (default set to `true`)
 - `autoSave` : Javascript Object containing a callback that will be used to save the widgets when their attributes have changed. The callback can implement a save to a database, save to localstorage or anything you want. You can also specify some options in the `autoSave` object, which will be passed to the callback when it's time to save. Options can be a Javascript Object containing key and values or a function that will return some options.
+- `logHelper` : Javascript Object containing a callback to print/output messages, a context for that callback and some predefined messages to display
 
 Options for gridstack.js : Look at the [gridstack docs](https://github.com/troolee/gridstack.js#options) for the available options
 
@@ -83,4 +84,5 @@ You can see an example of doing so by taking a look at the localstorage example 
 
 ##### Version 1.0.0
 - Implemented the basic functionalities of adding and removing widgets, saving the entire collection of widgets.
+- Customizable options to log help/errors messages
 - Support of AMD
