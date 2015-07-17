@@ -80,7 +80,7 @@
     }
   });
   
-  var DEFAULT_WIDGET_GRID_TEMPLATE = '<div id="main-gridstack" class="grid-stack">  </div>';
+  var DEFAULT_WIDGET_GRID_TEMPLATE = '<div id="main-gridstack" class="grid-stack grid-stack-<%=width%>">  </div>';
   
   GridView.WidgetGridView = Marionette.LayoutView.extend({
     template: _.template(DEFAULT_WIDGET_GRID_TEMPLATE),
@@ -109,6 +109,12 @@
   
     setAutoPos: function(autoPos) {
       this.settings.autoPos = autoPos;
+    },
+  
+    serializeData: function() {
+      return {
+        width: this.settings.gsOptions.width
+      };
     },
   
     setGridstackOptions: function(options) {

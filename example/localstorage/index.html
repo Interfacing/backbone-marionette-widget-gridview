@@ -4,8 +4,9 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta name="viewport" content="width=device-width initial-scale=1"/>
   <link rel='stylesheet' href='../../dist/marionette-widget-gridview.min.css'/>
-  <link rel="stylesheet" href="../../src/lib/gridstack/gridstack.min.css" >
-  <link rel="stylesheet" href="../custom.css" >
+  <link rel="stylesheet" href="../../src/lib/gridstack/gridstack.min.css">
+  <link rel="stylesheet" href="../../src/lib/gridstack/gridstack-extra.css">
+  <link rel="stylesheet" href="../custom.css">
   <style>
     .grid-btn {
       margin: 10px;
@@ -36,11 +37,11 @@
 
 <script>
   var CustomWidgetView = Marionette.GridView.WidgetView.extend({
-      template: _.template('<div class="some-widget"><button class="close-btn">X</button><p><%= position() %></p></div>'),
+      template: _.template('<div class="some-widget"><button class="close-btn">X</button><p><%= position() %></p><img src="cat.jpg" alt="Cat" style="width:100%;"></div>'),
       ui:       {
         close: '.close-btn'
       },
-      triggers:   {
+      triggers: {
         'click @ui.close': 'remove:widget'
       },
 
@@ -72,12 +73,16 @@
       });
     },
     getGridstackOptions = function() {
+
+      console.log(window.innerWidth);
+
       return {
-        vertical_margin: 20,
-        animate: $('#gsoption-animate').is(':checked'),
-        float: $('#gsoption-float').is(':checked'),
-        height: 10,
-        width: 10,
+        vertical_margin:           20,
+        animate:                   $('#gsoption-animate').is(':checked'),
+        float:                     $('#gsoption-float').is(':checked'),
+        height:                    0,
+        width:                     4,
+        cell_height:               200,
         always_show_resize_handle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
       };
     };
@@ -90,12 +95,12 @@
       collection:  widgets,
       customViews: views,
       autoPos:     false,
-      logHelper: {
+      logHelper:   {
         callback: console.log,
-        context: console,
+        context:  console,
         messages: {}
       },
-      autoSave: { callback:  saveCollectionOnLocalStorage },
+      autoSave:    { callback: saveCollectionOnLocalStorage },
       gsOptions:   getGridstackOptions()
     });
 
@@ -119,8 +124,8 @@
       type:     'button',
       viewType: randomView(),
       name:     'some widget',
-      width:    2,
-      height:   2,
+      width:    1,
+      height:   1,
       x:        0,
       y:        0,
       widgetId: newId
