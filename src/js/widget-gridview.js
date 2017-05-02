@@ -133,7 +133,7 @@ GridView.WidgetGridView = Marionette.LayoutView.extend({
                 $el = this.$('#' + region).closest('.grid-stack-item');
 
             this.removeRegion(region);
-            this.gridstack.remove_widget($el);
+            this.gridstack.removeWidget($el);
             //temporary fix for issue : https://github.com/troolee/gridstack.js/issues/167
             this.updateAllWidgetsAttributes();
         } else {
